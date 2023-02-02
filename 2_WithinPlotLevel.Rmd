@@ -1,0 +1,26 @@
+---
+title: "2_WithinPlotLevel"
+author: "Ben J. Rivera"
+date: '2023-01-31'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+
+load(file = ".RData") #this allows me to use the global data. So I can make dataframes elsewhere and then use them here.
+
+```
+
+Okay, the goal of this section is all about understanding how a much plant variation there can be within a 2x2 m quadrat. The goal is to compare the focal communities to their immediate surroundings. If they are tightly conserved, that would suggest a niche-y assembly which will then lead to an examination of which environmental variables matter. If no environmental variables are good, then we either did not measure the correct ones or we can blame spatial auto-correlation (See: 3_WithinSite/BetweenPointsLevel). If it is spatial auto-correlation and/or random, then we are thinking about neutral. I expect the relative importance of the environemnt to vary with environmental stress.
+
+
+
+```{r}
+
+
+
+```
+

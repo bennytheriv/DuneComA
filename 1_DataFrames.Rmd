@@ -1,0 +1,156 @@
+---
+title: "DCA_DataFrames"
+author: "Ben J. Rivera"
+date: '2023-01-16'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(readr)
+library(here)
+```
+
+The goal of this script is to create and clean the necessary dataframes to be used in analysis later. Run this first then move on to other scripts.
+
+
+# Reading CSVs in
+Okay, this is the boring part. I need to just load in all my datasets and get everything nice and pretty. I'm going to have to deal with plant names.
+
+## Places
+
+Loading in data based on where it was collected
+
+```{r}
+# Ten Mile
+TeMi_Coords <- read_csv(here("EnteredData", "TeMi_RelativeCoords.csv"))
+TeMi_Dist <- read_csv(here("EnteredData", "TeMi_Distance.csv"))
+TeMi_Cover <- read_csv(here("EnteredData", "TeMi_Cover.csv"))
+TeMi_Locations <- read_csv(here("EnteredData", "TeMi_Location.csv"))
+
+
+# Zmudowski
+Zmud_Coords <- read_csv(here("EnteredData", "Zmud_RelativeCoords.csv"))
+Zmud_Dist <- read_csv(here("EnteredData", "Zmud_Distance.csv"))
+Zmud_Cover <- read_csv(here("EnteredData", "Zmud_Cover.csv"))
+Zmud_Locations <- read_csv(here("EnteredData", "ZmudLocations.csv"))
+
+
+# Guadalupe Nipomo
+GuNi_Coords <- read_csv(here("EnteredData", "GuNi_RelativeCoords.csv"))
+GuNi_Dist <- read_csv(here("EnteredData", "GuNi_Distance.csv"))
+GuNi_Cover <- read_csv(here("EnteredData", "GuNi_Cover.csv"))
+GuNi_Locations <- read_csv(here("EnteredData", "GuNi_Location.csv"))
+
+
+```
+
+### Create Relative Coords
+
+```{r}
+TeMi_Subset_X <- subset(TeMi_Coords, IN_FID == 1)
+TeMi_Subset_Y <- subset(TeMi_Coords, IN_FID == 2)
+TeMi_Sub<-merge(TeMi_Subset_X, TeMi_Subset_Y, by = "NEAR_FID")
+TeMi_RelCords<- data.frame(Plot= TeMi_Sub$NEAR_FID, X = TeMi_Sub$NEAR_DIST.x, Y = TeMi_Sub$NEAR_DIST.y)
+TeMi_RelCords$Plot<- merge(TeMi_RelCords[1], TeMi_Locations[1:2], by.x = "Plot", by.y = "OID_")$Comment
+
+TeMi_RelCords<- mutate(TeMi_RelCords, X = ifelse(TeMi_RelCords$Plot == "WATERLINE",-1*X, X))
+
+```
+
+
+### Checking
+
+```{r}
+ggplot(aes(x = X, y = Y, label = Plot), data = TeMi_RelCords)+
+  geom_point()+
+  geom_label()
+
+ggplot(aes(x = POINT_X, y = POINT_Y, label = Comment, color = POINT_Z), data = TeMi_Locations)+
+  geom_point()+
+  geom_text()+
+  ggtitle("Ten Mile")
+ggplot(aes(x = POINT_X, y = POINT_Y, label = Comment, color = POINT_Z), data = Zmud_Locations)+
+  geom_point()+
+  geom_text()+
+  ggtitle("Zmudowski")
+ggplot(aes(x = POINT_X, y = POINT_Y, label = Comment, color = POINT_Z), data = GuNi_Locations)+
+  geom_point()+
+  geom_text()+
+  ggtitle("Guadalupe-Nipomo")
+
+
+```
+
+# Spanning Dataframes
+
+## Env Data
+
+
+```{r}
+DuneEnvData <- read_csv(here("EnteredData", "DuneEnvData.csv"))
+
+ggplot(aes(x= SoilTemp, y = SoilMoist, color = Site), data = DuneEnvData)+
+  geom_point() #okay so site super mattered which makes sense for temp. I'll scale it
+
+ggplot(aes(x= scale(SoilTemp), y = SoilMoist, color = Site), data = DuneEnvData)+
+  geom_point() #Lol. I need to scale Soil Temp by the site! Duh! I should actually do that for Soil Moisture too but it won't be as severe
+
+
+DuneEnv_scaled <- DuneEnvData %>% group_by(Site) %>% mutate(SoilTemp = scale(SoilTemp), SoilMoist=scale(SoilMoist))
+
+
+DuneEnv_scaled<-plyr::ddply(DuneEnvData, "Site", transform, SoilTemp = scale(SoilTemp))
+DuneEnv_scaled<-plyr::ddply(DuneEnv_scaled, "Site", transform, SoilMoist = scale(SoilMoist))
+
+
+#Temp v moist
+ggplot(aes(x= SoilTemp, y = SoilMoist), data = DuneEnv_scaled)+
+  geom_point(aes(color = Site)) +
+  geom_smooth(method = "lm", aes(color = Site), fill = NA)+
+  geom_smooth(method = "lm", color = "black")
+
+cor.test(x = DuneEnv_scaled$SoilMoist, y = DuneEnv_scaled$SoilTemp, method = "pearson") # temp and mositure are not correlated which is nice
+
+# Slope v SoilMoist
+ggplot(aes(x= Slope, y = SoilMoist), data = DuneEnv_scaled)+
+  geom_point(aes(color = Site)) +
+  geom_smooth(method = "lm")# No obvious pattern
+cor.test(x = DuneEnv_scaled$Slope, y = DuneEnv_scaled$SoilMoist, method = "pearson") # Nutthin
+
+#Slope v Temp ***
+ggplot(aes(x= Slope , y =SoilTemp), data = DuneEnv_scaled)+
+  geom_point(aes(color = Site)) +
+  geom_smooth(method = "lm")
+cor.test(x = DuneEnv_scaled$Slope, y = DuneEnv_scaled$SoilTemp, method = "pearson") # Topsoil, Slope explains SoilTemp
+
+#aspect slope
+ggplot(aes(x= Aspect, y = Slope), data = DuneEnv_scaled)+
+  geom_point(aes(color = Site)) # No obvious pattern
+summary(aov(Slope ~ Aspect, data = DuneEnv_scaled)) #nuthin
+
+
+#aspect temp
+ggplot(aes(x= Aspect, y = SoilTemp), data = DuneEnv_scaled)+
+  geom_point(aes(color = Site)) # No obvious pattern
+summary(aov(SoilTemp ~ Aspect, data = DuneEnv_scaled)) #nuthin
+
+
+#aspect Moist
+ggplot(aes(x= Aspect, y = SoilMoist), data = DuneEnv_scaled)+
+  geom_point(aes(color = Site)) # No obvious pattern
+summary(aov(SoilMoist ~ Aspect, data = DuneEnv_scaled)) #nuthin
+```
+
+
+
+
+## Phenology
+
+```{r}
+Pheno <-read_csv(here("EnteredData", "DunePhenoTrait.csv"))
+
+head(Pheno)
+```
+

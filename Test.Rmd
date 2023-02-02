@@ -8,4 +8,35 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
-Blahhhhh
+
+
+
+```{r}
+load(file = ".RData") #this allows me to use the global data. So I can make dataframes elsewhere and then use them here.
+head(GuNi_Locations)
+```
+
+# PCA reconscturction idea
+
+stole this from here. Might be interesting to reconstruct predictions from some of these models and I found this. Basically, I would use PCA to reduce the number of axes then put those axes in a GLMM (needed because of low sample size at high spatial scales). After that, I can create predictions. But those predictions would be in made up PCA units. Turns out that you kinda sorta can back transform PCA numbers into real numbers a litte. Idk. We'll see.
+
+here is an example I stole from here: https://stats.stackexchange.com/questions/229092/how-to-reverse-pca-and-reconstruct-original-variables-from-several-principal-com 
+
+
+```{r}
+X = iris[,1:4]
+
+mu = colMeans(X)
+
+
+Xpca = prcomp(X)
+
+nComp = 2
+
+plot(Xpca$x[,1:nComp])
+Xhat = Xpca$x[,1:nComp] %*% t(Xpca$rotation[,1:nComp])
+Xhat = scale(Xhat, center = -mu, scale = FALSE)
+
+iris[1,];Xhat[1,] #first is real, second is reconstructed
+```
+

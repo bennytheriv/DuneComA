@@ -1,0 +1,405 @@
+Site,Plot,Species,Phenology,LeafLength,LeafWidth,LeafThickness,Height,BasalDiam
+Zmud,1,Sea Rocket,fs,30.8,7.47,2.03,89.27,2.64
+Zmud,2,Yellow Sand Verbena,v,64.17,48.21,3.69,47.72,3.86
+Zmud,2,Morning glory,v,21.07,12.41,1.84,21.76,3.26
+Zmud,2,Beach primrose,fs,8.51,5.39,0.69,39.27,4.86
+Zmud,2,Sea Rocket,s,26.84,5.92,2.64,33.64,1.5
+Zmud,2,Carpobrotus edulis,v,38.4,8.91,7.58,57.63,8.09
+Zmud,3,Sea Rocket,fs,49.77,11.06,2.68,151.79,7.9
+Zmud,3,Carpobrotus edulis,f,30.76,8.86,5.91,40,2.81
+Zmud,3,Sagewort,v,43.49,23.74,0.51,47,4.75
+Zmud,4,Carpobrotus edulis,s,60.84,8.95,7.05,26,5.77
+Zmud,4,Sagewort,f,21.3,15.6,1.1,69,12.66
+Zmud,4,California Goldenbush,v,7.6,3.25,0.61,44,17.79
+Zmud,5,California Goldenbush,v,4.06,1.81,0.44,32,13.23
+Zmud,5,Sagewort,f,25.4,6.7,0.84,45,7.66
+Zmud,5,Foxglove,f,6.89,5.49,0.58,139.53,2.93
+Zmud,5,Carpobrotus edulis,f,32.27,6.83,6.62,50.43,3.71
+Zmud,5,Beach primrose,v,21.3,5.03,0.43,20.05,2.49
+Zmud,5,Monterey Spine Flower,s,3.59,1.48,0.55,10.07,1.38
+Zmud,6,Sea Rocket,fs,42.69,15.21,3.62,109.69,3.28
+Zmud,7,Carpobrotus edulis,fs,35.21,10.73,6.52,67.64,5.86
+Zmud,7,Sagewort,f,32.87,20.53,0.49,53,7.57
+Zmud,7,Foxglove,f,11.21,8.67,1.2,19,3.41
+Zmud,7,Yellow Sand Verbena,s,76.62,42.34,3.39,113.29,5.48
+Zmud,7,California Goldenbush,v,2.83,3.14,0.59,106.91,1.81
+Zmud,7,Branching Phacelia,fs,26.88,10.49,0.69,26,4.61
+Zmud,8,California Goldenbush,v,4.94,4.15,0.82,39,16.2
+Zmud,8,Cotton Batting Plant,f,13.29,3.27,1.72,67.17,2.38
+Zmud,9,Sagewort,f,28.63,10.43,1.14,320,7.86
+Zmud,9,Yellow Sand Verbena,v,42.18,28.25,2.51,132.23,2.97
+Zmud,9,Foxglove,f,12.01,7.66,1.36,103.52,4.52
+Zmud,9,California Goldenbush,v,3.55,3.66,0.58,150.92,4.52
+Zmud,9,Beach primrose,v,11.77,4.25,0.76,18.15,2.17
+Zmud,9,Monterey Spine Flower,sd,,,,28.2,0.34
+Zmud,10,Sagewort,f,,,,,
+Zmud,10,Yellow Sand Verbena,s,,,,,
+Zmud,10,Carpobrotus edulis,v,,,,,
+Zmud,10,Foxglove,f,,,,,
+Zmud,10,Beach primrose,s,,,,,
+Zmud,10,California Goldenbush,f,,,,,
+Zmud,10,Monterey Spine Flower,s,,,,,
+Zmud,11,California Goldenbush,v,4.65,3.54,0.51,54.65,4.64
+Zmud,11,Sagewort,f,18.92,9.33,1.04,410,3.82
+Zmud,11,Foxglove,f,,,,,
+Zmud,11,Yellow Sand Verbena,f,64.91,42.79,2.4,69.85,3.56
+Zmud,11,Beach primrose,v,,,,,
+Zmud,11,Monterey Spine Flower,sd,,,,,
+Zmud,11,Carpobrotus edulis,v,5.86,5.67,32.42,42.62,5.05
+Zmud,12,California Goldenbush,v,,,,,
+Zmud,12,Foxglove,f,,,,,
+Zmud,12,Yellow Sand Verbena,f,59.98,36.31,2.16,116.06,3.68
+Zmud,12,Sagewort,f,,,,,
+Zmud,12,Beach primrose,s,,,,,
+Zmud,13,California Goldenbush,v,,,,,
+Zmud,13,Foxglove,f,,,,,
+Zmud,13,Sagewort,f,,,,,
+Zmud,13,Monterey Spine Flower,s,,,,,
+Zmud,14,Yellow Bush Lupine,f,,,,,
+Zmud,14,California Goldenbush,v,,,,,
+Zmud,14,Sagewort,f,,,,,
+Zmud,14,Monterey Spine Flower,s,,,,,
+Zmud,15,California Goldenbush,v,,,,,
+Zmud,15,Foxglove,f,,,,,
+Zmud,15,Sagewort,f,,,,,
+Zmud,15,Beach primrose,s,,,,,
+Zmud,15,Branching Phacelia,fs,,,,,
+Zmud,15,Monterey Spine Flower,sd,,,,,
+Zmud,16,California Goldenbush,v,,,,,
+Zmud,16,Sagewort,v,,,,,
+Zmud,16,Foxglove,f,,,,,
+Zmud,16,Branching Phacelia,s,,,,,
+Zmud,18,California Goldenbush,f,,,,,
+Zmud,18,Sagewort,f,,,,,
+Zmud,18,Foxglove,f,,,,,
+Zmud,18,Monterey Spine Flower,sd,,,,,
+Zmud,18,Beach primrose,s,,,,,
+Zmud,19,California Goldenbush,v,,,,,
+Zmud,19,Sagewort,f,,,,,
+Zmud,19,Beach primrose,v,,,,,
+Zmud,19,Monterey Spine Flower,sd,,,,,
+Zmud,19,Foxglove,f,,,,,
+Zmud,19,Carpobrotus edulis,v,27.86,4.55,5.58,56.41,3.86
+Zmud,20,California Goldenbush,v,,,,,
+Zmud,20,Sagewort,v,,,,,
+Zmud,20,Foxglove,f,,,,,
+Zmud,20,Beach primrose,f,,,,,
+Zmud,20,Monterey Spine Flower,sd,,,,,
+Zmud,21,Sagewort,f,,,,,
+Zmud,21,California Goldenbush,f,,,,,
+Zmud,21,Carpobrotus edulis,v,28.54,8.55,6.34,57.85,6.75
+Zmud,21,Beach primrose,f,,,,,
+Zmud,22,California Goldenbush,v,,,,,
+Zmud,22,Sagewort,f,,,,,
+Zmud,22,Branching Phacelia,f,,,,,
+Zmud,22,Monterey Spine Flower,sd,,,,,
+Zmud,23,Sagewort,f,,,,,
+Zmud,23,Pink Sand Verbena,s,41.04,17.04,1.16,39.9,3.24
+Zmud,23,California Goldenbush,v,,,,,
+Zmud,23,Monterey Spine Flower,sd,,,,,
+Zmud,23,Beach primrose,v,,,,,
+Zmud,24,Sagewort,f,,,,,
+Zmud,24,California Goldenbush,v,,,,,
+Zmud,24,Foxglove,f,,,,,
+Zmud,24,Beach primrose,v,,,,,
+Zmud,24,Monterey Spine Flower,sd,,,,,
+Zmud,25,California Goldenbush,v,,,,,
+Zmud,25,Sagewort,f,,,,,
+Zmud,25,Monterey Spine Flower,sd,,,,,
+Zmud,26,California Goldenbush,v,,,,,
+Zmud,26,Sagewort,f,,,,,
+Zmud,26,Cotton Batting Plant,f,,,,,
+Zmud,27,California Goldenbush,v,,,,,
+Zmud,27,Sagewort,f,,,,,
+Zmud,27,Monterey Spine Flower,sd,,,,,
+Zmud,27,Beach primrose,v,,,,,
+Zmud,28,California Goldenbush,f,,,,,
+Zmud,28,Sagewort,f,,,,,
+Zmud,28,Monterey Spine Flower,sd,,,,,
+Zmud,29,Carpobrotus edulis,fs,39.22,8.21,8.95,45.05,4.82
+Zmud,29,Sagewort,f,26.81,14.83,1.53,440,44.62
+Zmud,29,California Goldenbush,f,4.82,6.09,1.52,310,19.83
+Zmud,30,California Goldenbush,v,,,,,
+Zmud,31,Carpobrotus edulis,fs,45.63,9.31,10.2,66.39,4.91
+Zmud,31,Pink Sand Verbena,fs,48.12,17.89,1.66,49.85,3.43
+Zmud,31,California Goldenbush,v,,,,,
+Zmud,31,Monterey Spine Flower,,,,,,
+Zmud,31,Beach primrose,,,,,,
+Zmud,32,Carpobrotus edulis,fs,39.33,10.75,8.39,64.04,7.75
+Zmud,32,Beach primrose,s,,,,,
+Zmud,32,Sagewort,f,,,,,
+Zmud,32,Monterey Spine Flower,sd,,,,,
+Zmud,33,California Goldenbush,v,,,,,
+Zmud,33,Carpobrotus edulis,s,22.64,6.12,8.03,72.55,4.72
+Zmud,34,California Goldenbush,v,,,,,
+Zmud,34,Carpobrotus edulis,v,45.74,9.06,6.99,141.5,5.59
+Zmud,35,California Goldenbush,v,,,,,
+Zmud,35,Sagewort,f,,,,,
+Zmud,35,Carpobrotus edulis,v,31.44,9.06,8.27,54.41,4.38
+Zmud,35,Monterey Spine Flower,sd,,,,,
+Zmud,36,California Goldenbush,v,,,,,
+Zmud,36,Branching Phacelia,fs,,,,,
+Zmud,36,Monterey Spine Flower,sd,,,,,
+Zmud,37,California Goldenbush,v,,,,,
+Zmud,37,Sagewort,f,,,,,
+Zmud,37,Monterey Spine Flower,sd,,,,,
+Zmud,38,Sagewort,f,,,,,
+Zmud,38,Beach primrose,v,,,,,
+Zmud,38,Carpobrotus edulis,v,19.47,5.15,3.95,25.77,1.47
+Zmud,38,Monterey Spine Flower,sd,,,,,
+Zmud,39,Carpobrotus edulis,fs,36.77,10.08,8.52,107.66,5.44
+Zmud,39,Monterey Spine Flower,sd,,,,,
+Zmud,40,Carpobrotus edulis,fs,38.74,9.8,9.55,95,5.09
+Zmud,40,California Goldenbush,v,,,,,
+Zmud,41,Carpobrotus edulis,s,49.85,8.51,10.85,52.35,3.17
+Zmud,41,California Goldenbush,v,,,,,
+Zmud,41,Beach primrose,f,,,,,
+Zmud,42,Morning glory,v,26.6,29.73,2.26,67.86,1.88
+Zmud,42,Lupinus Littoralis,vs,20.75,16.59,1.28,24.2,7.71
+Zmud,43,Sea Rocket,fs,50.14,10.09,3.08,92.98,2.22
+Zmud,44,Carpobrotus edulis,fs,31.04,11.5,8.75,51.26,4.73
+Zmud,44,Yellow Sand Verbena,v,33.03,26.47,3.34,27.61,3.12
+Zmud,44,Beach primrose,f,,,,,
+Zmud,44,Monterey Spine Flower,sd,,,,,
+GuNi,1,Pink Sand Verbena,f,44.89,25.06,4.99,43.67,5.1
+GuNi,1,Sea Rocket,f,,,,,
+GuNi,1,Carpobrotus edulis,f,35.17,9.17,10.43,50.39,3.37
+GuNi,2,Carpobrotus edulis,f,43.41,11.4,9.06,75.66,2.99
+GuNi,2,Sea Rocket,fs,,,,,
+GuNi,2,Seaside Agoseris,f,,,,,
+GuNi,4,Yellow Sand Verbena,f,63.7,42.76,3.73,45.9,3.33
+GuNi,5,Beach Burr,f,,,,,
+GuNi,5,Sea Rocket,f,,,,,
+GuNi,5,Agoseris,f,,,,,
+GuNi,6,Purple Sand Verbena,fs,43.14,23.05,4.8,57.91,3.2
+GuNi,6,Sea Rocket,fs,,,,,
+GuNi,6,Carpobrotus edulis,v,39.26,9.46,9.13,75.63,4.64
+GuNi,7,Carpobrotus edulis,s,44.87,11.04,10.05,110.79,5.62
+GuNi,7,Beach Burr,v,,,,,
+GuNi,7,Sea Rocket,fs,,,,,
+GuNi,8,Sea Rocket,fs,,,,,
+GuNi,8,Beach Burr,v,,,,,
+GuNi,8,Carpobrotus edulis,f,47.37,11.07,8.76,56.9,2.9
+GuNi,8,Purple Sand Verbena,v,41.98,26.05,3.86,40.87,4.99
+GuNi,9,Sea Rocket,fs,,,,,
+GuNi,10,Beach Burr,v,,,,,
+GuNi,10,Sea Rocket,fs,,,,,
+GuNi,10,Seaside Agoseris,f,,,,,
+GuNi,11,Sea Rocket,fs,,,,,
+GuNi,12,Carpobrotus edulis,s,46.65,12.58,11.24,64.32,7.3
+GuNi,12,Seaside Agoseris,fs,,,,,
+GuNi,12,Sea Rocket,fs,,,,,
+GuNi,17,Beach Burr,f,,,,,
+GuNi,17,Sea Rocket,f,,,,,
+GuNi,17,Carpobrotus edulis,v,47.53,7.28,8.57,88.54,5.21
+GuNi,17,Seaside Agoseris,f,,,,,
+GuNi,17,Ammophila arenaria,d,,,,,
+GuNi,18,Yellow Sand Verbena,f,52.77,31.73,1.93,56.05,3.16
+GuNi,18,Seaside Agoseris,f,,,,,
+GuNi,18,Sea Rocket,f,,,,,
+GuNi,18,Beach Burr,v,,,,,
+GuNi,19,Ammophila arenaria,d,,,,,
+GuNi,19,Beach Burr,v,,,,,
+GuNi,20,Carpobrotus edulis,s,41.05,10.45,7.21,46.52,3.6
+GuNi,20,Morning glory,v,,,,,
+GuNi,20,Sea Rocket,fs,,,,,
+GuNi,20,Purple Sand Verbena,v,41.37,21.21,4.23,39.38,4.24
+GuNi,21,Ammophila arenaria,d,,,,,
+GuNi,21,Sea Rocket,v,,,,,
+GuNi,22,Morning glory,v,,,,,
+GuNi,22,Carpobrotus edulis,fs,44.07,11.67,10.89,124.4,6.47
+GuNi,22,Sea Rocket,fs,,,,,
+GuNi,23,Purple Sand Verbena,v,47.83,22.92,5.17,50.7,4.23
+GuNi,23,Carpobrotus edulis,v,44.79,9.87,9.18,50.56,4.63
+GuNi,23,Morning glory,f,,,,,
+GuNi,23,Sea Rocket,f,,,,,
+GuNi,24,Carpobrotus edulis,fs,33.27,10.91,10.24,69.33,5.46
+GuNi,24,Purple Sand Verbena,fs,44.36,23.23,4.01,127.88,6.04
+GuNi,24,Beach Burr,v,,,,,
+GuNi,24,Sea Rocket,fs,,,,,
+GuNi,24,Morning glory,v,,,,,
+GuNi,25,Carpobrotus edulis,v,27.08,11.39,7.88,33.04,4.83
+GuNi,25,Beach primrose,fs,,,,,
+GuNi,25,Sea Rocket,fs,,,,,
+GuNi,25,Beach Burr,v,,,,,
+GuNi,27,Ammophila arenaria,d,,,,,
+GuNi,28,Ammophila arenaria,d,,,,,
+GuNi,30,Carpobrotus edulis,s,42.57,9.54,7.99,74.56,5.1
+GuNi,30,Yellow Sand Verbena,v,72.36,51.3,2.06,42.21,3.05
+GuNi,30,Seaside Agoseris,f,,,,,
+GuNi,30,Sea Rocket,fs,,,,,
+GuNi,30,Silky Beach Pea,v,,,,,
+GuNi,30,Saltbush,v,,,,,
+GuNi,30,Beach Burr,v,,,,,
+GuNi,31,Sea Rocket,fs,,,,,
+GuNi,31,Purple Sand Verbena,v,41.43,26.63,8.07,35.61,4.94
+GuNi,32,Purple Sand Verbena,fs,59.17,29.9,3.94,56.48,6.47
+GuNi,34,Purple Sand Verbena,v,43.71,29.93,6.7,34.61,4.26
+GuNi,34,Sea Rocket,s,,,,,
+GuNi,36,Carpobrotus edulis,fs,42.71,12.35,10.13,74.08,5.28
+GuNi,37,Purple Sand Verbena,fs,41.35,20.3,4.66,61.46,8.04
+GuNi,37,Sea Rocket,fs,,,,,
+GuNi,37,Morning glory,v,,,,,
+GuNi,38,Purple Sand Verbena,v,30.67,26.22,3.71,42.21,4.09
+GuNi,38,Morning glory,v,,,,,
+GuNi,38,Beach Burr,v,,,,,
+GuNi,38,Sea Rocket,fs,,,,,
+GuNi,38,Carpobrotus edulis,v,38.23,7.46,7.92,72.75,6.95
+GuNi,39,Carpobrotus edulis,v,37.96,9.17,9.63,62.39,6.48
+GuNi,39,Morning glory,v,,,,,
+GuNi,39,Sea Rocket,fs,,,,,
+GuNi,39,Beach Burr,v,,,,,
+GuNi,40,Beach Burr,f,,,,,
+GuNi,40,Sea Rocket,fs,,,,,
+GuNi,40,Agoseris,f,,,,,
+TeMi,1,Beach Burr,fs,,,,,
+TeMi,1,American Dune Grass,s,,,,,
+TeMi,1,Morning glory,v,,,,,
+TeMi,1,Yellow Sand Verbena,s,61.34,37.4,2.63,75.35,4.38
+TeMi,1,Ammophila arenaria,v,,,,,
+TeMi,3,Beach Burr,fs,,,,,
+TeMi,3,Sagewort,fs,,,,,
+TeMi,3,Morning glory,v,,,,,
+TeMi,3,Poa douglassii,v,,,,,
+TeMi,4,Beach Burr,fs,,,,,
+TeMi,4,Sagewort,fs,,,,,
+TeMi,4,Poa douglassii,v,,,,,
+TeMi,5,Beach Burr,s,,,,,
+TeMi,5,Poa douglassii,s,,,,,
+TeMi,5,Ammophila arenaria,v,,,,,
+TeMi,5,Morning glory,v,,,,,
+TeMi,5,Sea Rocket,s,,,,,
+TeMi,5,Yellow Sand Verbena,v,58,28.3,2.54,51.23,4.74
+TeMi,6,Beach Burr,fs,,,,,
+TeMi,7,Beach Burr,fs,,,,,
+TeMi,7,Poa douglassii,fs,,,,,
+TeMi,7,Morning glory,v,,,,,
+TeMi,7,Sagewort,s,,,,,
+TeMi,7,Yellow Sand Verbena,s,57.28,30.13,2.62,44.58,3.69
+TeMi,7,Sea Rocket,s,,,,,
+TeMi,7,Beach primrose,v,,,,,
+TeMi,8,Beach Burr,fs,,,,,
+TeMi,9,Beach Burr,fs,,,,,
+TeMi,9,Yellow Sand Verbena,s,64.66,34.37,2.98,56.85,4.67
+TeMi,9,Poa douglassii,s,,,,,
+TeMi,9,Morning glory,v,,,,,
+TeMi,9,Sagewort,s,,,,,
+TeMi,10,Beach Burr,fs,,,,,
+TeMi,10,Morning glory,v,,,,,
+TeMi,10,Poa douglassii,s,,,,,
+TeMi,10,Juncus acutis leopoldii,v,,,,,
+TeMi,11,Beach Burr,fs,,,,,
+TeMi,11,Poa douglassii,s,,,,,
+TeMi,11,Sagewort,s,,,,,
+TeMi,11,Juncus acutis leopoldii,s,,,,,
+TeMi,11,pacific gum plant,f,,,,,
+TeMi,11,Morning glory,v,,,,,
+TeMi,12,Morning glory,v,,,,,
+TeMi,12,Sagewort,s,,,,,
+TeMi,12,Beach primrose,v,,,,,
+TeMi,12,Poa douglassii,s,,,,,
+TeMi,12,Juncus acutis leopoldii,v,,,,,
+TeMi,13,Beach Burr,fs,,,,,
+TeMi,13,Morning glory,s,,,,,
+TeMi,13,Poa douglassii,s,,,,,
+TeMi,13,Juncus acutis leopoldii,s,,,,,
+TeMi,13,Erysimum menziesii,sd,,,,,
+TeMi,13,Beach primrose,s,,,,,
+TeMi,13,Sagewort,s,,,,,
+TeMi,14,Yellow Sand Verbena,s,48.47,36.58,3.16,44.47,4.69
+TeMi,14,Morning glory,v,,,,,
+TeMi,14,Beach primrose,fs,,,,,
+TeMi,14,Juncus acutis leopoldii,s,,,,,
+TeMi,14,Sagewort,s,,,,,
+TeMi,14,Poa douglassii,s,,,,,
+TeMi,14,Beach Burr,fs,,,,,
+TeMi,15,Yellow Sand Verbena,fs,53.62,35.57,2.23,58.55,5.6
+TeMi,15,Poa douglassii,s,,,,,
+TeMi,15,Sagewort,fs,,,,,
+TeMi,15,Morning glory,v,,,,,
+TeMi,16,Morning glory,v,,,,,
+TeMi,16,Sagewort,s,,,,,
+TeMi,16,Poa douglassii,s,,,,,
+TeMi,16,Beach Burr,fs,,,,,
+TeMi,17,Beach Burr,fs,,,,,
+TeMi,17,Juncus acutis leopoldii,v,,,,,
+TeMi,17,Poa douglassii,s,,,,,
+TeMi,17,Sagewort,s,,,,,
+TeMi,17,Morning glory,v,,,,,
+TeMi,17,Yellow Sand Verbena,s,53.13,39.7,2.66,40.32,4.1
+TeMi,18,Sagewort,fs,,,,,
+TeMi,18,Beach primrose,fs,,,,,
+TeMi,19,Yellow Sand Verbena,s,46.85,22.91,2.46,26.98,4.59
+TeMi,19,Beach Burr,fs,,,,,
+TeMi,19,Juncus acutis leopoldii,s,,,,,
+TeMi,19,Poa douglassii,s,,,,,
+TeMi,19,Morning glory,v,,,,,
+TeMi,19,Sagewort,fs,,,,,
+TeMi,20,Yellow Sand Verbena,fs,33.99,33.83,2.13,41.49,5.93
+TeMi,20,Juncus acutis leopoldii,v,,,,,
+TeMi,20,Beach Burr,v,,,,,
+TeMi,21,Morning glory,v,,,,,
+TeMi,21,Poa douglassii,v,,,,,
+TeMi,22,Morning glory,v,,,,,
+TeMi,22,Beach Burr,fs,,,,,
+TeMi,22,Poa douglassii,s,,,,,
+TeMi,22,Sagewort,fs,,,,,
+TeMi,22,Beach primrose,f,,,,,
+TeMi,23,Beach Burr,fs,,,,,
+TeMi,23,Beach primrose,s,,,,,
+TeMi,23,Poa douglassii,s,,,,,
+TeMi,23,Morning glory,v,,,,,
+TeMi,24,Beach Burr,fs,,,,,
+TeMi,24,Poa douglassii,v,,,,,
+TeMi,24,Morning glory,s,,,,,
+TeMi,25,Beach Burr,fs,,,,,
+TeMi,25,Sagewort,fs,,,,,
+TeMi,25,Beach primrose,fs,,,,,
+TeMi,25,Yellow Sand Verbena,s,72.4,39.39,2.16,73.18,5.21
+TeMi,25,Morning glory,v,,,,,
+TeMi,25,Poa douglassii,s,,,,,
+TeMi,26,Yellow Sand Verbena,s,43.37,37.38,2.33,45.89,3.64
+TeMi,26,Morning glory,v,,,,,
+TeMi,26,Beach Burr,fs,,,,,
+TeMi,28,Morning glory,s,,,,,
+TeMi,28,Yellow Sand Verbena,fs,66.9,38.87,2.83,56.09,4.19
+TeMi,28,Beach Burr,v,,,,,
+TeMi,28,Poa douglassii,s,,,,,
+TeMi,29,Morning glory,v,,,,,
+TeMi,29,Sagewort,fs,,,,,
+TeMi,29,Erysimum menziesii,v,,,,,
+TeMi,31,Yellow Sand Verbena,s,52.16,35.54,2.36,69.03,5.01
+TeMi,31,Beach Burr,fs,,,,,
+TeMi,31,Sagewort,fs,,,,,
+TeMi,31,Morning glory,v,,,,,
+TeMi,31,Poa douglassii,s,,,,,
+TeMi,32,Yellow Sand Verbena,v,31.08,29.28,2.04,33.34,2.38
+TeMi,32,Beach Burr,fs,,,,,
+TeMi,32,Sagewort,fs,,,,,
+TeMi,32,Morning glory,s,,,,,
+TeMi,32,Poa douglassii,s,,,,,
+TeMi,33,Beach Burr,fs,,,,,
+TeMi,33,Yellow Sand Verbena,s,61.4,41.02,2.1,47.07,5.13
+TeMi,33,Poa douglassii,s,,,,,
+TeMi,33,Morning glory,v,,,,,
+TeMi,34,Beach Burr,fs,,,,,
+TeMi,34,Morning glory,v,,,,,
+TeMi,35,Yellow Sand Verbena,v,44.97,32.99,1.86,92.68,3.1
+TeMi,35,Poa douglassii,s,,,,,
+TeMi,35,Morning glory,v,,,,,
+TeMi,35,Beach Burr,f,,,,,
+TeMi,36,Poa douglassii,s,,,,,
+TeMi,36,Yellow Sand Verbena,s,38.03,28.81,2.06,67.96,3.44
+TeMi,36,Beach Burr,fs,,,,,
+TeMi,36,Morning glory,v,,,,,
+TeMi,38,Yellow Sand Verbena,,29.26,39.16,3.32,54.98,5.05
+TeMi,39,Morning glory,v,,,,,
+TeMi,39,Beach Burr,fs,,,,,
+TeMi,40,Morning glory,v,,,,,
+TeMi,40,Beach Burr,f,,,,,
+TeMi,40,Poa douglassii,s,,,,,
+TeMi,48,Yellow Sand Verbena,fs,81.44,38.83,2.04,72.77,5.57
+TeMi,48,Sea Rocket,fs,,,,,
+TeMi,50,Yellow Sand Verbena,s,87.68,46.48,3.54,93.27,5.74
+TeMi,50,Sea Rocket,fs,,,,,
+TeMi,50,Beach Burr,s,,,,,
