@@ -186,5 +186,59 @@ summary(aov(SoilMoist ~ Aspect, data = DuneEnv_scaled)) #nuthin
 Pheno <-read_csv(here("EnteredData", "DunePhenoTrait.csv"))
 
 head(Pheno)
+
+CollectedTraits <- subset(Pheno,  is.na(LeafLength) == FALSE)
+
+
+SuccTraits <- rbind(subset(CollectedTraits, Species == "Yellow Sand Verbena"), subset(CollectedTraits, Species == "Pink Sand Verbena"), subset(CollectedTraits, Species == "Purple Sand Verbena"), subset(CollectedTraits, Species == "Carpobrotus edulis"))
+
+```
+
+
+### Checking Graphs
+
+```{r}
+hist(CollectedTraits$LeafLength) #Normal
+hist(CollectedTraits$LeafWidth) #might need Log
+hist(log(CollectedTraits$LeafWidth)) #not really better
+hist(CollectedTraits$LeafThickness) #typo and log transform
+hist(log(CollectedTraits$LeafThickness))
+hist(CollectedTraits$Height) #
+hist(CollectedTraits$BasalDiam)
+
+
+subset(CollectedTraits, LeafTraits$LeafThickness >20) #Thats a typo
+subset(CollectedTraits, LeafTraits$Height >205) #Okay, maybe legit
+subset(CollectedTraits, LeafTraits$BasalDiam >25) #Just a chonky boi but worth double checking
+
+
+```
+
+```{r}
+ggplot(aes(x = LeafLength, y = LeafWidth, color = Species, shape = Site), data = SuccTraits)+
+  geom_point()
+ggplot(aes(x = LeafLength, y = LeafThickness, color = Species, shape = Site), data = SuccTraits)+
+  geom_point()
+ggplot(aes(x = LeafLength, y = Height, color = Species, shape = Site), data = SuccTraits)+
+  geom_point()
+ggplot(aes(x = LeafLength, y = BasalDiam, color = Species, shape = Site), data = SuccTraits)+
+  geom_point()
+
+ggplot(aes(x = LeafWidth, y = LeafThickness, color = Species, shape = Site), data = SuccTraits)+
+  geom_point()
+ggplot(aes(x = LeafWidth, y = Height, color = Species, shape = Site), data = SuccTraits)+
+  geom_point()
+ggplot(aes(x = LeafWidth, y = BasalDiam, color = Species, shape = Site), data = SuccTraits)+
+  geom_point()
+
+ggplot(aes(x = LeafThickness, y = Height, color = Species, shape = Site), data = SuccTraits)+
+  geom_point()
+ggplot(aes(x = LeafThickness, y = BasalDiam, color = Species, shape = Site), data = SuccTraits)+
+  geom_point()
+
+ggplot(aes(x = Height, y = BasalDiam, color = Species, shape = Site), data = SuccTraits)+
+  geom_point()
+
+
 ```
 
