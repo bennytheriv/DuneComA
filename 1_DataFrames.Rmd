@@ -48,22 +48,48 @@ GuNi_Locations <- read_csv(here("EnteredData", "GuNi_Location.csv"))
 
 ### Create Relative Coords
 
-```{r}
-TeMi_Subset_X <- subset(TeMi_Coords, IN_FID == 1)
-TeMi_Subset_Y <- subset(TeMi_Coords, IN_FID == 2)
-TeMi_Sub<-merge(TeMi_Subset_X, TeMi_Subset_Y, by = "NEAR_FID")
-TeMi_RelCords<- data.frame(Plot= TeMi_Sub$NEAR_FID, X = TeMi_Sub$NEAR_DIST.x, Y = TeMi_Sub$NEAR_DIST.y)
-TeMi_RelCords$Plot<- merge(TeMi_RelCords[1], TeMi_Locations[1:2], by.x = "Plot", by.y = "OID_")$Comment
+Here I am creating coordinates for each point at each site relative to the plot. Rather than being absolute, North South, these are positioned parrelel to the waterline. This will be used for drawing environmental comparisons along these axes which make more sense with stress.
 
-TeMi_RelCords<- mutate(TeMi_RelCords, X = ifelse(TeMi_RelCords$Plot == "WATERLINE",-1*X, X))
+```{r}
+#TeMi
+TeMi_Subset_X <- subset(TeMi_Coords, IN_FID == 1) #Just the X 
+TeMi_Subset_Y <- subset(TeMi_Coords, IN_FID == 2) #Just the Y
+TeMi_Sub<-merge(TeMi_Subset_X, TeMi_Subset_Y, by = "NEAR_FID") #recombine them
+TeMi_RelCords<- data.frame(Plot= TeMi_Sub$NEAR_FID, X = TeMi_Sub$NEAR_DIST.x, Y = TeMi_Sub$NEAR_DIST.y, Z = TeMi_Locations$POINT_Z) #make a data frame with XYZ
+TeMi_RelCords$Plot<- merge(TeMi_RelCords[1], TeMi_Locations[1:2], by.x = "Plot", by.y = "OID_")$Comment #This fixes the names
+TeMi_RelCords<- mutate(TeMi_RelCords, X = ifelse(TeMi_RelCords$Plot == "WATERLINE",-1*X, X)) #
+TeMi_RelCords$Z <- TeMi_RelCords$Z - min(subset(TeMi_RelCords,Plot != "WATERLINE")$Z)
+
+#Zmud
+Zmud_Subset_X <- subset(Zmud_Coords, IN_FID == 2)
+Zmud_Subset_Y <- subset(Zmud_Coords, IN_FID == 3)
+Zmud_Sub<-merge(Zmud_Subset_X, Zmud_Subset_Y, by = "NEAR_FID")
+Zmud_RelCords<- data.frame(Plot= Zmud_Sub$NEAR_FID, X = Zmud_Sub$NEAR_DIST.x, Y = Zmud_Sub$NEAR_DIST.y, Z = Zmud_Locations$POINT_Z)
+Zmud_RelCords$Plot<- merge(Zmud_RelCords[1], Zmud_Locations[1:2], by.x = "Plot", by.y = "OID_")$Comment
+Zmud_RelCords<- mutate(Zmud_RelCords, X = ifelse(Zmud_RelCords$Plot == "WATERLINE",-1*X, X))
+Zmud_RelCords$Z <- Zmud_RelCords$Z - min(subset(Zmud_RelCords,Plot != "WATERLINE")$Z)
+
+#GuNi
+GuNi_Subset_X <- subset(GuNi_Coords, IN_FID == 3)
+GuNi_Subset_Y <- subset(GuNi_Coords, IN_FID == 2)
+GuNi_Sub<-merge(GuNi_Subset_X, GuNi_Subset_Y, by = "NEAR_FID")
+GuNi_RelCords<- data.frame(Plot= GuNi_Sub$NEAR_FID, X = GuNi_Sub$NEAR_DIST.x, Y = GuNi_Sub$NEAR_DIST.y, Z = GuNi_Locations$POINT_Z)
+GuNi_RelCords$Plot<- merge(GuNi_RelCords[1], GuNi_Locations[1:2], by.x = "Plot", by.y = "OID_")$Comment
+GuNi_RelCords<- mutate(GuNi_RelCords, X = ifelse(GuNi_RelCords$Plot == "WATERLINE",-1*X, X))
+GuNi_RelCords$Z <- GuNi_RelCords$Z - min(GuNi_RelCords$Z)
+
+
+
 
 ```
 
 
-### Checking
+### Checking Coords
+
+Here I am making sure that the rotation worked properly. 
 
 ```{r}
-ggplot(aes(x = X, y = Y, label = Plot), data = TeMi_RelCords)+
+ggplot(aes(x = X, y = Y, label = Plot, color = Z), data = TeMi_RelCords)+
   geom_point()+
   geom_label()
 
@@ -71,15 +97,23 @@ ggplot(aes(x = POINT_X, y = POINT_Y, label = Comment, color = POINT_Z), data = T
   geom_point()+
   geom_text()+
   ggtitle("Ten Mile")
+
+
+ggplot(aes(x = X, y = Y, label = Plot, color = Z), data = Zmud_RelCords)+
+  geom_point()+
+  geom_label()
 ggplot(aes(x = POINT_X, y = POINT_Y, label = Comment, color = POINT_Z), data = Zmud_Locations)+
   geom_point()+
   geom_text()+
   ggtitle("Zmudowski")
+
+ggplot(aes(x = X, y = Y, label = Plot, color = Z), data = GuNi_RelCords)+
+  geom_point()+
+  geom_label()
 ggplot(aes(x = POINT_X, y = POINT_Y, label = Comment, color = POINT_Z), data = GuNi_Locations)+
   geom_point()+
   geom_text()+
   ggtitle("Guadalupe-Nipomo")
-
 
 ```
 
