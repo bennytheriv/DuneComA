@@ -10,6 +10,9 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(readr)
 library(here)
+library(rtry)
+
+
 ```
 
 The goal of this script is to create and clean the necessary dataframes to be used in analysis later. Run this first then move on to other scripts.
@@ -23,28 +26,48 @@ Okay, this is the boring part. I need to just load in all my datasets and get ev
 Loading in data based on where it was collected
 
 ```{r}
+Proper_Names <- read_csv(here("EnteredData", "PlantNameChanger.csv"))
+
+
 # Ten Mile
 TeMi_Coords <- read_csv(here("EnteredData", "TeMi_RelativeCoords.csv"))
 TeMi_Dist <- read_csv(here("EnteredData", "TeMi_Distance.csv"))
-TeMi_Cover <- read_csv(here("EnteredData", "TeMi_Cover.csv"))
 TeMi_Locations <- read_csv(here("EnteredData", "TeMi_Location.csv"))
 
 
 # Zmudowski
 Zmud_Coords <- read_csv(here("EnteredData", "Zmud_RelativeCoords.csv"))
 Zmud_Dist <- read_csv(here("EnteredData", "Zmud_Distance.csv"))
-Zmud_Cover <- read_csv(here("EnteredData", "Zmud_Cover.csv"))
 Zmud_Locations <- read_csv(here("EnteredData", "ZmudLocations.csv"))
 
 
 # Guadalupe Nipomo
 GuNi_Coords <- read_csv(here("EnteredData", "GuNi_RelativeCoords.csv"))
 GuNi_Dist <- read_csv(here("EnteredData", "GuNi_Distance.csv"))
-GuNi_Cover <- read_csv(here("EnteredData", "GuNi_Cover.csv"))
 GuNi_Locations <- read_csv(here("EnteredData", "GuNi_Location.csv"))
 
 
 ```
+
+### Fixing Cover Names
+```{r}
+TeMi_Cover <- read_csv(here("EnteredData", "TeMi_Cover.csv"))
+TeMi_Cover<- merge(TeMi_Cover, Proper_Names, by.x = "Species", by.y = "Old_Species_Name")
+rownames(TeMi_Cover)<- TeMi_Cover$New_Species_Name
+TeMi_Cover<- TeMi_Cover[2:(length(TeMi_Cover)-1) ]
+
+Zmud_Cover <- read_csv(here("EnteredData", "Zmud_Cover.csv"))
+Zmud_Cover<- merge(Zmud_Cover, Proper_Names, by.x = "Species", by.y = "Old_Species_Name")
+rownames(Zmud_Cover)<- Zmud_Cover$New_Species_Name
+Zmud_Cover<- Zmud_Cover[2:(length(Zmud_Cover)-1) ]
+
+GuNi_Cover <- read_csv(here("EnteredData", "GuNi_Cover.csv"))
+GuNi_Cover<- merge(GuNi_Cover, Proper_Names, by.x = "Species", by.y = "Old_Species_Name")
+rownames(GuNi_Cover)<- GuNi_Cover$New_Species_Name
+GuNi_Cover<- GuNi_Cover[2:(length(GuNi_Cover)-1) ]
+
+```
+
 
 ### Create Relative Coords
 
@@ -116,6 +139,9 @@ ggplot(aes(x = POINT_X, y = POINT_Y, label = Comment, color = POINT_Z), data = G
   ggtitle("Guadalupe-Nipomo")
 
 ```
+
+
+
 
 # Spanning Dataframes
 
@@ -239,6 +265,58 @@ ggplot(aes(x = LeafThickness, y = BasalDiam, color = Species, shape = Site), dat
 ggplot(aes(x = Height, y = BasalDiam, color = Species, shape = Site), data = SuccTraits)+
   geom_point()
 
+
+```
+
+# Traits From Databases
+
+Okay, let's figure out how to get some traits from the online world. There is code back from the Traits textbook that I am hoping to co-op for my own purposes. I am also using this as some training for the Roots class if need be.
+
+```{r}
+### I moved the data set "ProperNames Up to use on Cover"
+
+library("traits")
+library("taxize")
+taxa_search(Proper_Names[1:20,]$New_Species_Name, db = "traitbank")
+
+
+library("TR8")
+
+tr8(species_list = Proper_Names[1:5,]$New_Species_Name, gui_config=TRUE, allow_persistent=TRUE)
+
+
+TryNames <- read_csv(here("EnteredData", "TryAccSpecies.csv"))
+
+
+Trying<-merge(Proper_Names, TryNames, by.x ="New_Species_Name", by.y = "AccSpeciesName")
+
+unique(Trying$AccSpeciesID)
+
+TryTraits <- read_csv(here("EnteredData", "tde20232141444.csv"))
+
+
+
+TryTraits$count<-rowSums(TryTraits[3:length(TryTraits)] != 0)
+
+PickedTraits<- subset(TryTraits, count>5)
+
+colSums(PickedTraits[3:length(TryTraits)] != 0)
+
+PickedTraits$TraitID
+```
+
+
+
+## Try Data processing
+```{r}
+TryData<- rtry_import(here("EnteredData", "TryData", "Traits.txt"))
+
+rtry_trans_wider(TryData,  
+                 complete.cases(TraitID))
+
+TryData %>%
+  group_by(AccSpeciesName, TraitName)
+  
 
 ```
 

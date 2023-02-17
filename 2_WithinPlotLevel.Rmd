@@ -9,6 +9,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 
 library(tidyverse)
+library(vegan)
 
 load(file = ".RData") #this allows me to use the global data. So I can make dataframes elsewhere and then use them here.
 
@@ -16,11 +17,161 @@ load(file = ".RData") #this allows me to use the global data. So I can make data
 
 Okay, the goal of this section is all about understanding how a much plant variation there can be within a 2x2 m quadrat. The goal is to compare the focal communities to their immediate surroundings. If they are tightly conserved, that would suggest a niche-y assembly which will then lead to an examination of which environmental variables matter. If no environmental variables are good, then we either did not measure the correct ones or we can blame spatial auto-correlation (See: 3_WithinSite/BetweenPointsLevel). If it is spatial auto-correlation and/or random, then we are thinking about neutral. I expect the relative importance of the environemnt to vary with environmental stress.
 
+# *Species Composition*
+##Ten Mile
+```{r}
+#I make unique identifiers for each plot
+TeMi_Names<- colnames(TeMi_Cover)
+TeMi_Names<-gsub('.{1}$', '', TeMi_Names)
+TeMi_Names<-unique(gsub('TeMi.', '', TeMi_Names))
+TeMi_Diss<-data.frame(Plot = rep("", length(TeMi_Names)), Dissimilarity= rep(0, length(TeMi_Names)))
 
+
+for (i in 1:length(TeMi_Names)) {
+  Temp_Cover<-TeMi_Cover %>% select(starts_with(paste0("TeMi.", TeMi_Names[i])))
+  Temp_Diss<-vegdist(t(Temp_Cover), na.rm = TRUE)
+  Temp_Av_Dis<-sum(as.matrix(Temp_Diss)[,1])/4
+  TeMi_Diss$Plot[i]<- TeMi_Names[i]
+  TeMi_Diss$Dissimilarity[i]<- ifelse(is.na(Temp_Av_Dis) == TRUE, 0, ifelse(Temp_Av_Dis == "NaN", 0, Temp_Av_Dis))
+
+}
+
+
+densityplot(TeMi_Diss$Dissimilarity)
+
+TeMi_Diss$Plot<- as.numeric(TeMi_Diss$Plot)
+
+TeMi_Diss<-merge(TeMi_Diss, TeMi_RelCords)
+
+```
+
+### Graphs and models
 
 ```{r}
+densityplot(TeMi_Diss$X)
+densityplot(TeMi_Diss$Y)
+densityplot(TeMi_Diss$Z)
 
+summary(lm(Dissimilarity ~ X, data = TeMi_Diss)) # Distance from waterline not sig
+ggplot(aes(x = X, y = Dissimilarity), data = TeMi_Diss)+
+  geom_point()
+
+summary(lm(Dissimilarity ~ Y, data = TeMi_Diss))
+ggplot(aes(x = Y, y = Dissimilarity), data = TeMi_Diss)+
+  geom_point()
+
+summary(lm(Dissimilarity ~ Z, data = TeMi_Diss))
+ggplot(aes(x = Z, y = Dissimilarity), data = TeMi_Diss)+
+  geom_point()
+
+
+summary(lm(Dissimilarity ~ X+Y+Z, data = TeMi_Diss))
 
 
 ```
 
+## Zmudowski
+```{r}
+#I make unique identifiers for each plot
+Zmud_Names<- colnames(Zmud_Cover)
+Zmud_Names<-gsub('.{1}$', '', Zmud_Names)
+Zmud_Names<-unique(gsub('Zmud.', '', Zmud_Names))
+Zmud_Diss<-data.frame(Plot = rep("", length(Zmud_Names)), Dissimilarity= rep(0, length(Zmud_Names)))
+
+
+for (i in 1:length(Zmud_Names)) {
+  Temp_Cover<-Zmud_Cover %>% select(starts_with(paste0("Zmud.", Zmud_Names[i])))
+  Temp_Diss<-vegdist(t(Temp_Cover), na.rm = TRUE)
+  Temp_Av_Dis<-sum(as.matrix(Temp_Diss)[,1])/4
+  Zmud_Diss$Plot[i]<- Zmud_Names[i]
+  Zmud_Diss$Dissimilarity[i]<- ifelse(is.na(Temp_Av_Dis) == TRUE, 0, ifelse(Temp_Av_Dis == "NaN", 0, Temp_Av_Dis))
+
+}
+
+
+densityplot(Zmud_Diss$Dissimilarity)
+
+Zmud_Diss$Plot<- as.numeric(Zmud_Diss$Plot)
+
+Zmud_Diss<-merge(Zmud_Diss, Zmud_RelCords)
+
+```
+
+### Graphs and models
+
+```{r}
+densityplot(Zmud_Diss$X)
+densityplot(Zmud_Diss$Y)
+densityplot(Zmud_Diss$Z)
+
+summary(lm(Dissimilarity ~ X, data = Zmud_Diss)) # Distance from waterline SIG HERE!
+ggplot(aes(x = X, y = Dissimilarity), data = Zmud_Diss)+
+  geom_point()+
+  geom_smooth(method = "lm")
+
+ summary(lm(Dissimilarity ~ Y, data = Zmud_Diss))
+ggplot(aes(x = Y, y = Dissimilarity), data = Zmud_Diss)+
+  geom_point()
+
+summary(lm(Dissimilarity ~ Z, data = Zmud_Diss))
+ggplot(aes(x = Z, y = Dissimilarity), data = Zmud_Diss)+
+  geom_point()
+
+
+summary(lm(Dissimilarity ~ X+Y+Z, data = Zmud_Diss))
+
+
+```
+
+
+## Guadalupe-Nipomo
+```{r}
+#I make unique identifiers for each plot
+GuNi_Names<- colnames(GuNi_Cover)
+GuNi_Names<-gsub('.{1}$', '', GuNi_Names)
+GuNi_Names<-unique(gsub('GuNi.', '', GuNi_Names))
+GuNi_Diss<-data.frame(Plot = rep("", length(GuNi_Names)), Dissimilarity= rep(0, length(GuNi_Names)))
+
+
+for (i in 1:length(GuNi_Names)) {
+  Temp_Cover<-GuNi_Cover %>% select(starts_with(paste0("GuNi.", GuNi_Names[i])))
+  Temp_Diss<-vegdist(t(Temp_Cover), na.rm = TRUE)
+  Temp_Av_Dis<-sum(as.matrix(Temp_Diss)[,1])/4
+  GuNi_Diss$Plot[i]<- GuNi_Names[i]
+  GuNi_Diss$Dissimilarity[i]<- ifelse(is.na(Temp_Av_Dis) == TRUE, 0, ifelse(Temp_Av_Dis == "NaN", 0, Temp_Av_Dis))
+
+}
+
+
+densityplot(GuNi_Diss$Dissimilarity)
+
+GuNi_Diss$Plot<- as.numeric(GuNi_Diss$Plot)
+
+GuNi_Diss<-merge(GuNi_Diss, GuNi_RelCords)
+
+```
+
+### Graphs and models
+
+```{r}
+densityplot(GuNi_Diss$X)
+densityplot(GuNi_Diss$Y)
+densityplot(GuNi_Diss$Z)
+
+summary(lm(Dissimilarity ~ X, data = GuNi_Diss)) # Distance from waterline not sig
+ggplot(aes(x = X, y = Dissimilarity), data = GuNi_Diss)+
+  geom_point()
+
+summary(lm(Dissimilarity ~ Y, data = GuNi_Diss))
+ggplot(aes(x = Y, y = Dissimilarity), data = GuNi_Diss)+
+  geom_point()
+
+summary(lm(Dissimilarity ~ Z, data = GuNi_Diss))
+ggplot(aes(x = Z, y = Dissimilarity), data = GuNi_Diss)+
+  geom_point()
+
+
+summary(lm(Dissimilarity ~ X+Y+Z,  data = GuNi_Diss))
+
+
+```

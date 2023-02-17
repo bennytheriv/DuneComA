@@ -1,0 +1,292 @@
+Trait,TraitID,.Abronia latifolia.,.Abronia maritima.,.Abronia umbellata.,.Agoseris apargioides.,.Ambrosia chamissonis.,.Ammophila arenaria.,.Artemisia pycnocephala.,.Cakile maritima.,.Calystegia soldanella.,.Camissoniopsis cheiranthifolia.,.Carpobrotus edulis.,.Castilleja latifolia.,.Chorizanthe pungens.,.Ericameria ericoides.,.Erysimum menziesii.,.Grindelia stricta var. platyphylla.,.Lathyrus littoralis.,.Leymus mollis.,.Lupinus arboreus.
+Bark crystals,831,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0
+Bark structure ,837,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0
+Dispersal syndrome,28,3,1,2,2,3,33,2,245,14,3,10,2,0,2,1,2,1,0,7
+Leaf compoundness,17,1,1,1,1,1,4,1,6,2,1,3,1,0,1,1,0,1,1,3
+Leaf type,43,1,1,1,1,1,4,1,3,1,1,1,1,0,2,1,0,1,1,1
+Leaflet number per leaf,759,1,1,1,1,1,1,1,2,1,1,1,1,0,1,1,0,0,1,0
+Photosynthesis pathway,22,2,4,2,0,0,13,1,12,9,1,8,0,0,1,0,0,1,2,5
+Plant containing salt glands,1023,2,2,0,0,0,0,0,2,1,0,1,0,0,0,0,0,0,0,0
+Plant growth form,42,12,15,29,17,11,48,7,39,34,15,25,12,9,146,16,1,12,17,34
+Plant growth form detailed consolidated,3401,1,1,1,1,0,1,1,0,0,1,0,1,1,1,1,0,1,1,1
+Plant growth form simple consolidated,3400,1,1,2,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1
+Plant height vegetative,3106,1,0,0,0,0,121,0,25,112,0,18,0,0,1,0,0,0,39,16
+Plant human usage types,604,2,2,2,0,0,13,0,2,0,0,2,0,0,0,0,0,2,0,13
+Plant woodiness,38,1,1,1,1,1,9,1,10,8,1,7,1,0,3,1,0,1,2,5
+Seed dry mass,26,9,6,11,10,11,25,9,49,17,11,2,9,0,9,8,10,1,0,21
+Species occurrence range: ecological occurrence range,822,2,2,2,0,0,0,0,1,2,0,2,0,0,0,0,0,2,0,0
+Stem pith type,1233,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0
+Wood axial parenchyma types,1211,1,0,0,0,0,0,0,1,1,0,1,0,0,0,0,0,0,0,0
+Wood cambium type (cambial variant),303,2,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0
+Wood crystal types,304,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0
+Wood fiber cell wall thickness,1216,1,0,0,0,0,0,0,1,1,0,1,0,0,0,0,0,0,0,0
+Wood fiber-pits types,1220,1,0,0,0,0,0,0,1,1,0,1,0,0,0,0,0,0,0,0
+Wood growth ring distinction,273,2,0,0,0,0,0,0,4,2,0,3,0,0,0,0,0,0,0,0
+Wood ray types,1234,3,0,0,0,0,0,0,2,1,0,2,0,0,0,0,0,0,0,0
+Wood storied tissue types,1235,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+Wood vessel density,1237,1,0,0,0,0,0,0,2,1,0,1,0,0,0,0,0,0,0,0
+Wood vessel diameter,1238,1,0,0,0,0,0,0,1,1,0,1,0,0,0,0,0,0,0,0
+Wood vessel distribution,1239,1,0,0,0,0,0,0,3,1,0,0,0,0,0,0,0,0,0,0
+Wood vessel helical thickenings,280,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+Wood vessel perforation plates,278,1,0,0,0,0,0,0,1,1,0,1,0,0,0,0,0,0,0,0
+Leaf phenology type,37,0,2,0,0,0,5,0,4,4,0,3,0,0,0,0,0,0,0,0
+Plant lifespan (longevity),59,0,2,0,0,1,15,1,9,9,1,3,0,0,1,0,0,0,0,3
+Plant nitrogen(N) fixation capacity,8,0,4,1,0,0,7,0,6,6,0,0,0,0,1,0,0,3,3,4
+Species tolerance to salt,1254,0,2,0,0,0,2,0,4,2,0,1,0,0,0,0,0,0,0,1
+Mycorrhiza type,7,0,0,14,0,0,27,0,22,15,0,0,0,0,0,0,0,0,0,0
+"Root type, root architecture",65,0,0,1,0,0,6,0,2,2,0,0,0,0,0,0,0,0,0,0
+Stomata conductance: vapor pressure deficit at final reduction,430,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+Stomata conductance: vapor pressure deficit at initial reduction,429,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+Budbank height distribution,153,0,0,0,0,0,55,0,12,12,0,0,0,0,0,0,0,0,0,0
+Budbank seasonality,865,0,0,0,0,0,38,0,5,8,0,0,0,0,0,0,0,0,0,0
+Crown (canopy) length: diameter along the longest axis,324,0,0,0,0,0,1,0,1,1,0,4,0,0,0,0,0,0,0,0
+Dispersal frequency,890,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0
+Dispersal unit appendages,892,0,0,0,0,0,5,0,5,5,0,0,0,0,0,0,0,0,0,0
+Dispersal unit dry mass,233,0,0,0,0,0,32,0,1,52,0,0,0,0,0,0,0,0,0,0
+Dispersal unit exposure ,893,0,0,0,0,0,1,0,1,1,0,0,0,0,0,0,0,0,0,0
+Dispersal unit length,237,0,0,0,0,0,16,0,19,1,0,0,0,0,0,0,0,0,0,0
+Dispersal unit shape,232,0,0,0,0,0,6,0,7,3,0,0,0,0,0,0,0,0,0,0
+Dispersal unit surface structure,894,0,0,0,0,0,1,0,1,1,0,0,0,0,0,0,0,0,0,0
+Dispersal unit thickness ,235,0,0,0,0,0,15,0,3,1,0,0,0,0,0,0,0,0,0,0
+Dispersal unit type,231,0,0,0,0,0,16,0,155,2,0,1,0,0,0,0,0,0,0,1
+Dispersal unit width,236,0,0,0,0,0,16,0,11,1,0,0,0,0,0,0,0,0,0,0
+Flower color,207,0,0,0,0,0,1,0,2,2,0,2,0,0,0,0,0,0,0,1
+Flower conspicuous,581,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1
+Flower insemination autogamous or xenogamous,204,0,0,0,0,0,1,0,1,1,0,0,0,0,0,0,0,0,0,0
+Flower pollinator and type of reward,205,0,0,0,0,0,2,0,3,4,0,0,0,0,0,0,0,0,0,0
+Flower sex,213,0,0,0,0,0,1,0,1,1,0,0,2,0,0,0,0,0,0,0
+Flower sex timing,212,0,0,0,0,0,2,0,2,0,0,0,0,0,0,0,0,0,0,0
+Flower sexual self-incompatibility mechanism,211,0,0,0,0,0,2,0,2,2,0,0,0,0,0,0,0,0,0,0
+"Flower sexual syndrome (dichogamy, cleistogamy, dioecious, monoecious)",915,0,0,0,0,0,5,0,6,1,0,1,0,0,0,0,0,0,0,1
+Flowering requirement (requirement for fertility),597,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1
+Fruit type,99,0,0,0,0,0,2,0,2,3,0,2,0,0,0,0,0,0,0,0
+Fruit/seed abundance,605,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1
+Fruit/seed color,585,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1
+Fruit/seed conspicuous,586,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1
+"Leaf area (in case of compound leaves undefined if leaf or leaflet, undefined if petiole is in- or e",3114,0,0,0,0,0,1,0,4,0,0,1,0,0,133,0,0,0,5,1
+"Leaf area (in case of compound leaves: leaf, petiole excluded)",3108,0,0,0,0,0,9,0,0,26,0,0,0,0,0,0,0,0,34,0
+"Leaf area (in case of compound leaves: leaf, petiole included)",3110,0,0,0,0,0,61,0,1,58,0,0,0,0,0,0,0,0,0,8
+"Leaf area (in case of compound leaves: leaflet, petiole excluded)",3109,0,0,0,0,0,2,0,5,0,0,0,0,0,0,0,0,0,0,0
+"Leaf area per leaf dry mass (specific leaf area, SLA or 1/LMA): petiole excluded",3115,0,0,0,0,0,19,0,5,28,0,0,0,0,0,0,0,0,34,0
+"Leaf area per leaf dry mass (specific leaf area, SLA or 1/LMA): petiole included",3116,0,0,0,0,0,63,0,12,64,0,0,0,0,0,0,0,0,0,8
+"Leaf area per leaf dry mass (specific leaf area, SLA or 1/LMA): undefined if petiole is in- or exclu",3117,0,0,0,0,0,4,0,3,1,0,1,0,0,133,0,0,0,5,8
+Leaf calcium (Ca) content per leaf dry mass,252,0,0,0,0,0,9,0,0,30,0,0,0,0,0,0,0,0,34,0
+Leaf carbon (C) content per leaf area,570,0,0,0,0,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0
+Leaf carbon (C) content per leaf dry mass,13,0,0,0,0,0,4,0,0,0,0,0,0,0,3,0,0,0,0,0
+Leaf carbon (C) isotope fractionation ('big' Delta 13C),3478,0,0,0,0,0,2,0,1,0,0,0,0,0,0,0,0,0,0,0
+Leaf carbon/nitrogen (C/N) ratio,146,0,0,0,0,0,6,0,1,1,0,0,0,0,3,0,0,0,0,0
+Leaf color,582,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,2
+Leaf distribution along the shoot axis (arrangement type),16,0,0,0,0,0,12,0,4,4,0,1,0,0,0,0,0,0,0,1
+Leaf dry mass (single leaf),55,0,0,0,0,0,61,0,26,63,0,0,0,0,133,0,0,0,0,8
+"Leaf dry mass per leaf fresh mass (leaf dry matter content, LDMC)",47,0,0,0,0,0,14,0,21,33,0,0,0,0,0,0,0,0,34,0
+"Leaf emergences (pubescence, pruinescence, hairs, spines, thorns)",677,0,0,0,0,0,1,0,1,1,0,0,0,0,0,0,0,0,0,2
+Leaf magnesium (Mg) content per leaf dry mass,257,0,0,0,0,0,9,0,0,30,0,0,0,0,0,0,0,0,34,0
+Leaf nitrogen (N) content per leaf area,50,0,0,0,0,0,15,0,0,26,0,0,0,0,0,0,0,0,34,0
+Leaf nitrogen (N) content per leaf dry mass,14,0,0,0,0,0,17,0,0,30,0,0,0,0,3,0,0,0,34,0
+Leaf nitrogen/phosphorus (N/P) ratio,56,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0
+Leaf pH,615,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0
+Leaf phosphorus (P) content per leaf area,51,0,0,0,0,0,15,0,0,26,0,0,0,0,0,0,0,0,34,0
+Leaf phosphorus (P) content per leaf dry mass,15,0,0,0,0,0,17,0,0,30,0,0,0,0,0,0,0,0,34,0
+Leaf porosity,583,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,2
+Leaf potassium (K) content per leaf area,52,0,0,0,0,0,9,0,0,26,0,0,0,0,0,0,0,0,34,0
+Leaf potassium (K) content per leaf dry mass,44,0,0,0,0,0,9,0,0,30,0,0,0,0,0,0,0,0,34,0
+Leaf shape,154,0,0,0,0,0,6,0,13,7,0,6,0,0,266,0,0,0,0,5
+"Leaf texture (sclerophylly, physical strength, toughness)",2,0,0,0,0,0,2,0,1,0,0,0,0,0,0,0,0,0,0,1
+Mycorrhizal infection intensity,1030,0,0,0,0,0,1,0,2,1,0,0,0,0,0,0,0,0,0,0
+Plant biomass and allometry: Leaf dry mass per plant,129,0,0,0,0,0,2,0,7,0,0,0,0,0,0,0,0,0,2,0
+"Plant biomass and allometry: Leaf dry mass per plant dry mass (leaf weight ratio, LWR)",110,0,0,0,0,0,2,0,7,0,0,0,0,0,0,0,0,0,2,0
+Plant biomass and allometry: Plant dry mass,700,0,0,0,0,0,2,0,7,0,0,0,0,0,0,0,0,0,2,0
+Plant biomass and allometry: Root dry mass per plant,363,0,0,0,0,0,2,0,7,0,0,0,0,0,0,0,0,0,2,0
+Plant biomass and allometry: Root mass fraction (fraction of root dry mass per whole plant dry mass),470,0,0,0,0,0,2,0,7,0,0,0,0,0,0,0,0,0,2,0
+Plant biomass and allometry: Seed number per plant,131,0,0,0,0,0,1,0,4,0,0,0,0,0,0,0,0,0,0,0
+Plant biomass and allometry: Stem dry mass per plant,128,0,0,0,0,0,2,0,7,0,0,0,0,0,0,0,0,0,2,0
+Plant biomass and allometry: Stem dry mass per plant dry mass,136,0,0,0,0,0,2,0,7,0,0,0,0,0,0,0,0,0,2,0
+Plant clonal growth form,341,0,0,0,0,0,8,0,1,1,0,0,0,0,0,0,0,0,0,0
+Plant defence mechanisms: chemical,346,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1
+Plant defence mechanisms: physical,345,0,0,0,0,0,1,0,4,2,0,0,0,0,0,0,0,0,0,3
+Plant growth rate,587,0,0,0,0,0,1,0,2,1,0,0,0,0,0,0,0,0,0,1
+Plant height generative,3107,0,0,0,0,0,6,0,6,6,0,0,0,0,0,0,0,0,0,0
+Plant height versus plant width relationship,1016,0,0,0,0,0,1,0,2,1,0,1,0,0,0,0,0,0,0,1
+Plant life form (Raunkiaer life form),343,0,0,0,0,0,10,0,21,10,0,6,0,0,0,0,0,0,0,3
+Plant mating system,347,0,0,0,0,0,2,0,2,2,0,0,0,0,0,0,0,0,0,0
+Plant moisture use type,599,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1
+Plant mono/poly carpic,1029,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1
+Plant morphological adaptations: seed or dispersal unit metamorphoses,813,0,0,0,0,0,5,0,4,5,0,0,0,0,0,0,0,0,0,0
+Plant morphological adaptations: shoot metamorphoses,817,0,0,0,0,0,2,0,3,4,0,1,0,0,0,0,0,0,0,1
+Plant morphological adaptations: storage organs,816,0,0,0,0,0,6,0,1,2,0,0,0,0,0,0,0,0,0,0
+Plant number of offspring shoots per parent shoot per year,361,0,0,0,0,0,8,0,1,1,0,0,0,0,0,0,0,0,0,0
+Plant nutrition mode (heterotrophy),201,0,0,0,0,0,4,0,5,3,0,3,0,0,0,0,0,0,0,2
+Plant ontogeny: age of maturity (first flowering),155,0,0,0,0,0,6,0,1,3,0,0,0,0,0,0,0,0,0,0
+Plant palatability,679,0,0,0,0,0,5,0,0,0,0,0,0,0,0,0,0,0,0,5
+Plant propagation type,609,0,0,0,0,0,10,0,2,0,0,0,0,0,0,0,0,0,0,10
+Plant reproductive phenology timing (flowering time),335,0,0,0,0,0,17,0,27,11,0,5,0,0,0,0,0,0,0,7
+Plant resprouting capacity,819,0,0,0,0,0,1,0,0,0,0,2,0,0,0,0,0,0,0,1
+Plant vegetative phenology (leaf phenology),1251,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,2
+Plant vegetative regeneration capacity,344,0,0,0,0,0,6,0,2,4,0,3,0,0,0,0,0,0,0,1
+Plant vegetative regeneration species offspring size relative to parent,1008,0,0,0,0,0,8,0,1,1,0,0,0,0,0,0,0,0,0,0
+Plant vegetative reproduction: clonality of ramets,329,0,0,0,0,0,1,0,2,1,0,1,0,0,0,0,0,0,0,1
+Plant vegetative reproduction: lateral spread,334,0,0,0,0,0,8,0,1,1,0,0,0,0,0,0,0,0,0,0
+Plant vegetative reproduction: pattern forming,1206,0,0,0,0,0,1,0,2,1,0,1,0,0,0,0,0,0,0,1
+Plant vegetative reproduction: persistence of connection between clonal growth organs,358,0,0,0,0,0,8,0,1,1,0,0,0,0,0,0,0,0,0,0
+Plant vegetative reproduction: role of clonal growth organ in plant growth,357,0,0,0,0,0,8,0,1,1,0,0,0,0,0,0,0,0,0,0
+Plant vegetative reproduction: spread rate,613,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1
+Plant vital attributes of persistence and establishment,320,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0
+Pollen diameter,1042,0,0,0,0,0,1,0,2,0,0,0,0,0,0,0,0,0,0,0
+Pollination syndrome,29,0,0,0,0,0,7,0,13,9,0,3,0,0,0,0,0,0,0,1
+Root length,1079,0,0,0,0,0,1,0,1,1,0,0,0,0,0,0,0,0,0,0
+Root position along clonal growth organ,1093,0,0,0,0,0,8,0,1,1,0,0,0,0,0,0,0,0,0,0
+Root rooting depth,6,0,0,0,0,0,2,0,2,0,0,0,0,0,0,0,0,0,0,1
+Seed (seedbank) longevity,33,0,0,0,0,0,15,0,0,2,0,0,0,0,0,0,0,0,0,0
+Seed germination rate (germination efficiency),95,0,0,0,0,0,2,7,11,5,7,0,4,0,0,0,0,0,0,8
+Seed germination requirement,596,0,0,0,0,0,5,0,3,1,0,0,0,0,0,0,0,0,0,1
+Seed germination stimulation,34,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0
+Seed germination temperature,353,0,0,0,0,0,2,0,1,3,0,0,0,0,0,0,0,0,0,0
+Seed length,27,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0
+Seed morphology type,350,0,0,0,0,0,4,0,9,0,0,0,0,0,0,0,0,0,0,0
+Seed number per dispersal unit,351,0,0,0,0,0,1,0,1,1,0,0,0,0,0,0,0,0,0,0
+Seed number per ramet,336,0,0,0,0,0,1,0,2,1,0,0,0,0,0,0,0,0,0,0
+Seed number per reproducton unit,138,0,0,0,0,0,2,0,6,2,0,0,0,0,0,0,0,0,0,0
+Seed oil content per seed mass,96,0,0,0,0,0,3,0,6,0,0,0,0,0,0,0,0,0,0,0
+Seed protein content per seed mass,97,0,0,0,0,0,3,0,6,0,0,0,0,0,0,0,0,0,0,0
+Seed spread rate,610,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1
+Seed structure type,1108,0,0,0,0,0,4,0,5,0,0,0,0,0,0,0,0,0,0,0
+Seed terminal velocity,66,0,0,0,0,0,5,0,26,1,0,0,0,0,0,0,0,0,0,0
+Seed thickness,238,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0
+Seed width,239,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0
+Seedbank density,1111,0,0,0,0,0,15,0,0,4,0,0,0,0,0,0,0,0,0,0
+Seedbank duration,2809,0,0,0,0,0,12,0,0,1,0,0,0,0,0,0,0,0,0,0
+Seedbank number of layers,2807,0,0,0,0,0,12,0,0,1,0,0,0,0,0,0,0,0,0,0
+Seedbank thickness of top layer,2808,0,0,0,0,0,12,0,0,0,0,0,0,0,0,0,0,0,0,0
+Seedbank type,159,0,0,0,0,0,26,0,0,3,0,0,0,0,0,0,0,0,0,0
+Seedling vigor,611,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1
+Shoot branching type; shoot branching architecture,140,0,0,0,0,0,10,0,2,3,0,0,0,0,0,0,0,0,0,0
+Shoot carbon/nitrogen (C/N) ratio,409,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1
+Shoot cyclicity,1118,0,0,0,0,0,8,0,1,1,0,0,0,0,0,0,0,0,0,0
+Species environmental indicator value according to Ellenberg: continentality,1130,0,0,0,0,0,1,0,1,1,0,0,0,0,0,0,0,0,0,0
+Species environmental indicator value according to Ellenberg: light,1131,0,0,0,0,0,3,0,5,3,0,2,0,0,0,0,0,0,0,1
+Species environmental indicator value according to Ellenberg: moisture,1132,0,0,0,0,0,3,0,2,2,0,1,0,0,0,0,0,0,0,2
+Species environmental indicator value according to Ellenberg: nitrogen,1133,0,0,0,0,0,2,0,7,4,0,1,0,0,0,0,0,0,0,2
+Species environmental indicator value according to Ellenberg: pH ,1134,0,0,0,0,0,3,0,3,3,0,2,0,0,0,0,0,0,0,2
+Species environmental indicator value according to Ellenberg: salt tolerance,1135,0,0,0,0,0,4,0,5,3,0,3,0,0,0,0,0,0,0,2
+Species environmental indicator value according to Ellenberg: temperature,1136,0,0,0,0,0,1,0,2,1,0,0,0,0,0,0,0,0,0,0
+Species generation overlap,1137,0,0,0,0,0,7,0,1,1,0,0,0,0,0,0,0,0,0,0
+Species genotype: chromosome base number,221,0,0,0,0,0,2,0,1,1,0,0,0,0,0,0,0,0,0,0
+Species genotype: chromosome cDNA content,224,0,0,0,0,0,4,0,3,1,0,0,0,0,0,0,0,0,0,9
+Species genotype: chromosome number,223,0,0,0,0,0,8,0,6,2,0,1,0,0,0,0,0,0,0,9
+Species genotype: chromosome ploidy,222,0,0,0,0,0,5,0,2,3,0,0,0,0,0,0,0,0,0,8
+Species habitat characterisation / Plant requirement: precipitation,602,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,2
+Species habitat characterisation / Plant requirement: soil pH,600,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,2
+Species habitat characterisation / Plant requirement: soil texture,593,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,3
+Species light requirement,788,0,0,0,0,0,2,0,1,1,0,1,0,0,0,0,0,0,0,0
+Species nutrient requirements,1138,0,0,0,0,0,2,0,2,2,0,3,0,0,0,0,0,0,0,2
+"Species nutritional relationships (mycorrhizal symbioses, N-fixation, parasitism, carnivory, …)",3488,0,0,0,0,0,1,0,2,1,0,1,0,0,0,0,0,0,0,0
+Species occurrence rang: typical abundance where naturally occurring,1139,0,0,0,0,0,1,0,2,1,0,1,0,0,0,0,0,0,0,1
+Species occurrence range characteristics,1140,0,0,0,0,0,24,0,40,30,0,19,0,0,0,0,0,0,0,17
+Species occurrence range: continentality,823,0,0,0,0,0,5,0,10,9,0,1,0,0,0,0,0,0,0,1
+Species occurrence range: endemism,244,0,0,0,0,0,1,0,1,1,0,0,0,0,0,0,0,0,0,0
+Species occurrence range: native vs invasive,218,0,0,0,0,0,4,0,3,3,0,1,0,0,0,0,0,0,0,2
+Species occurrence range: number of floristic zones,200,0,0,0,0,0,1,0,1,1,0,0,0,0,0,0,0,0,0,0
+Species occurrence range: origin zonal,827,0,0,0,0,0,1,0,1,1,0,2,0,0,0,0,0,0,0,4
+Species phyto-sociological group,230,0,0,0,0,0,2,0,1,1,0,0,0,0,0,0,0,0,0,0
+Species reproduction type,208,0,0,0,0,0,2,0,1,1,0,0,0,0,0,0,0,0,0,0
+Species soil moisture requirements,1144,0,0,0,0,0,2,0,2,0,0,0,0,0,0,0,0,0,0,0
+Species soil pH requirement,1142,0,0,0,0,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0
+Species start of CGO formation versus reproduction,1146,0,0,0,0,0,8,0,1,1,0,0,0,0,0,0,0,0,0,0
+Species status (nativity at growth location),1145,0,0,0,0,0,1,0,2,1,0,1,0,0,0,0,0,0,0,1
+Species strategy type according to Grime,196,0,0,0,0,0,2,0,2,2,0,1,0,0,0,0,0,0,0,0
+Species tolerance to CaCO3,595,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1
+Species tolerance to drought,30,0,0,0,0,0,2,0,0,0,0,1,0,0,0,0,0,0,0,1
+Species tolerance to fire,318,0,0,0,0,0,6,0,0,0,0,4,0,0,0,0,0,0,0,2
+Species tolerance to frost,31,0,0,0,0,0,4,0,1,1,0,2,0,0,1,0,0,0,1,3
+Species tolerance to hedges,598,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1
+Species tolerance to human impact,199,0,0,0,0,0,7,0,4,4,0,0,0,0,0,0,0,0,0,0
+Species tolerance to planting density,601,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,2
+Species tolerance to shade,603,0,0,0,0,0,5,0,12,3,0,3,0,0,0,0,0,0,0,5
+Species tolerance to waterlogging,61,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1
+Species US Wetland Indicator,575,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0
+Stem longevity,1187,0,0,0,0,0,1,0,2,1,0,0,0,0,0,0,0,0,0,0
+Stem self-supporting,1188,0,0,0,0,0,1,0,4,1,0,1,0,0,0,0,0,0,0,1
+"Stem specific density (SSD, stem dry mass per stem fresh volume) or wood density",4,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0
+Stomata distribution to ab- and adaxial leaf surfaces,781,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0
+Tillering type,1194,0,0,0,0,0,8,0,1,1,0,0,0,0,0,0,0,0,0,0
+Bark sclereids arrangement,834,0,0,0,0,0,0,0,2,1,0,0,0,0,0,0,0,0,0,0
+Dispersal unit floating capacity,1263,0,0,0,0,0,0,0,132,0,0,0,0,0,0,0,0,0,0,0
+Flower number of pollen per ovule,210,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0
+"Inflorescence: seed number per inflorescence (total, fertile, infertile)",1104,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0
+"Leaf angle (inclination, orientation)",3,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0
+"Leaf area (in case of compound leaves: leaf, undefined if petiole in- or excluded)",3112,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0
+"Leaf area (in case of compound leaves: leaflet, petiole included)",3111,0,0,0,0,0,0,0,10,5,0,0,0,0,0,0,0,0,0,0
+"Leaf area (in case of compound leaves: leaflet, undefined if petiole is in- or excluded)",3113,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0
+Leaf carbon isotope signature (delta 13C),89,0,0,0,0,0,0,0,1,0,0,0,0,0,3,0,0,0,0,0
+Leaf length,144,0,0,0,0,0,0,0,1,0,0,0,0,0,266,0,0,0,0,0
+Leaf water content per leaf dry mass (not saturated),3120,0,0,0,0,0,0,0,4,0,0,0,0,0,0,0,0,0,0,0
+Leaf width,145,0,0,0,0,0,0,0,1,0,0,0,0,0,133,0,0,0,0,0
+Mycorrhiza status and microbial interactions,3370,0,0,0,0,0,0,0,1,1,0,1,0,0,0,0,0,0,0,0
+Plant functional type (PFT),197,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0
+Plant height,18,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0
+Plant morphological adaptations: root metamorphoses,814,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0
+Plant species use for bioremediation,3371,0,0,0,0,0,0,0,1,1,0,1,0,0,0,0,0,0,0,0
+Seed number per flower,1103,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0
+Seed storage behaviour,98,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,1
+Species occurrence range: climate type,825,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0
+"Bark secondary compounds: oil, tannins, latex, slime",835,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0
+Bark sieve tubes grouping,836,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0
+Leaf aluminium (Al) content per leaf dry mass,249,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0
+Leaf ash content per leaf dry mass,333,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0
+Leaf barium (Ba) content per leaf dry mass,251,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0
+Leaf bromine (Br) content per leaf dry mass,542,0,0,0,0,0,0,0,0,4,0,0,0,0,0,0,0,0,0,0
+Leaf caesium (Cs) content per leaf dry mass,547,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0
+Leaf chlorine (Cl) content per leaf dry mass,539,0,0,0,0,0,0,0,0,4,0,0,0,0,0,0,0,0,0,0
+Leaf cobalt (Co) content per leaf dry mass,253,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0
+Leaf copper (Cu) content per leaf dry mass,255,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0
+Leaf iron (Fe) content per leaf dry mass,256,0,0,0,0,0,0,0,0,4,0,0,0,0,0,0,0,0,0,0
+Leaf manganese (Mn) content per leaf dry mass,258,0,0,0,0,0,0,0,0,4,0,0,0,0,0,0,0,0,0,0
+Leaf molybdenum (Mo) content per leaf dry mass,259,0,0,0,0,0,0,0,0,4,0,0,0,0,0,0,0,0,0,0
+Leaf rubidium (Rb) content per leaf dry mass,543,0,0,0,0,0,0,0,0,4,0,0,0,0,0,0,0,0,0,0
+Leaf scandium (Sc) content per leaf dry mass,540,0,0,0,0,0,0,0,0,4,0,0,0,0,0,0,0,0,0,0
+Leaf sodium (Na) content per leaf dry mass,260,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0
+Leaf strontium (Sr) content per leaf dry mass,265,0,0,0,0,0,0,0,0,4,0,0,0,0,0,0,0,0,0,0
+Leaf vanadium (V) content per leaf dry mass,267,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0
+Leaf zinc (Zn) content per leaf dry mass,268,0,0,0,0,0,0,0,0,4,0,0,0,0,0,0,0,0,0,0
+Seed number per square meter,1105,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0
+Wood fiber septate fibers present,1217,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0
+Wood vessel intervessel pits,1240,0,0,0,0,0,0,0,0,2,0,2,0,0,0,0,0,0,0,0
+Crown (canopy) density,722,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0
+Crown (canopy) elevation (bottom height),3684,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0
+Flower corolla type,2936,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0
+Flower petal number,2937,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0
+Flower stamen number,2938,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0
+Flower symmetry type (flower shape),2935,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0
+Fruit dehiscence type,2940,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0
+Fruit pericarp type,2939,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0
+Fruit surface type,2941,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0
+Inflorescence type,2934,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0
+Leaf margin type,963,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0
+Leaf petiole length,143,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,1
+Photosynthesis organ,3687,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0
+Photosynthesis: primary photosynthetic apparatus abaxial color,3694,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0
+Photosynthesis: primary photosynthetic apparatus adaxial color,3693,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0
+Photosynthesis: primary photosynthetic apparatus cross section,3688,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0
+Photosynthesis: primary photosynthetic apparatus indumentum,3692,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0
+Photosynthesis: primary photosynthetic apparatus margin,3691,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0
+Photosynthesis: primary photosynthetic apparatus shape,3690,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0
+Photosynthesis: primary photosynthetic apparatus type,3689,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0
+Plant microbial association,3699,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0
+Plant multi-stemness,3685,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0
+Plant part protected by spines,3695,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0
+Shoot erectness,3686,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0
+Species tolerance to grazing,228,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0
+Wood vessel cell-wall thickness,1236,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0
+Leaf isoprene emission category,937,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0
+Leaf isoprene emission rate per leaf dry mass,939,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0
+Leaf nitrogen (N) isotope signature (delta 15N),78,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0
+Leaf perimeter,142,0,0,0,0,0,0,0,0,0,0,0,0,0,133,0,0,0,0,0
+Leaf thickness,46,0,0,0,0,0,0,0,0,0,0,0,0,0,133,0,0,0,0,16
+Leaf vein density,740,0,0,0,0,0,0,0,0,0,0,0,0,0,133,0,0,0,0,0
+Leaf volatile organic carbon (VOC): other than monoterpenes emission,2815,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0
+Stem conduit cross-sectional area (vessels and tracheids),170,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0
+Leaf chlorophyll content per leaf area,413,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,5,0
+"Leaf density (leaf tissue density, leaf dry mass per leaf volume)",48,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,16
+Leaflet length,985,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2
+Leaflet number of first order per leaf,971,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2
+Leaflet width,986,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2
