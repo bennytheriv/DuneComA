@@ -11,7 +11,8 @@ library(tidyverse)
 library(readr)
 library(here)
 library(rtry)
-
+library(corrplot)
+library(vegan)
 
 ```
 
@@ -149,21 +150,27 @@ ggplot(aes(x = POINT_X, y = POINT_Y, label = Comment, color = POINT_Z), data = G
 
 
 ```{r}
-DuneEnvData <- read_csv(here("EnteredData", "DuneEnvData.csv"))
+DuneEnv <- read_csv(here("EnteredData", "DuneEnvData.csv"))
+DuneSoil<-read_csv(here("EnteredData", "Dune_ph_salinity.csv"))
 
+DuneEnvData<- merge(DuneEnv, DuneSoil, all = TRUE )
+```
+
+```{r}
 ggplot(aes(x= SoilTemp, y = SoilMoist, color = Site), data = DuneEnvData)+
   geom_point() #okay so site super mattered which makes sense for temp. I'll scale it
 
-ggplot(aes(x= scale(SoilTemp), y = SoilMoist, color = Site), data = DuneEnvData)+
+ggplot(aes(x= scale(SoilTemp), y = (scale(SoilMoist)), color = Site), data = DuneEnvData)+
   geom_point() #Lol. I need to scale Soil Temp by the site! Duh! I should actually do that for Soil Moisture too but it won't be as severe
 
 
-DuneEnv_scaled <- DuneEnvData %>% group_by(Site) %>% mutate(SoilTemp = scale(SoilTemp), SoilMoist=scale(SoilMoist))
+#DuneEnv_scaled <- DuneEnvData %>% group_by(Site) %>% mutate(SoilTemp = scale(SoilTemp), SoilMoist=scale(SoilMoist))
 
+DuneEnv_scaled<-plyr::ddply(DuneEnvData, "Site", transform, SoilMoist = scale(SoilMoist))
 
-DuneEnv_scaled<-plyr::ddply(DuneEnvData, "Site", transform, SoilTemp = scale(SoilTemp))
-DuneEnv_scaled<-plyr::ddply(DuneEnv_scaled, "Site", transform, SoilMoist = scale(SoilMoist))
+DuneEnv_scaled<-plyr::ddply(DuneEnv_scaled, "Site", transform, SoilTemp = scale(SoilTemp))
 
+DuneEnv_scaled$SoilTemp <- DuneEnv_scaled$SoilTemp[,1]
 
 #Temp v moist
 ggplot(aes(x= SoilTemp, y = SoilMoist), data = DuneEnv_scaled)+
@@ -201,7 +208,18 @@ summary(aov(SoilTemp ~ Aspect, data = DuneEnv_scaled)) #nuthin
 ggplot(aes(x= Aspect, y = SoilMoist), data = DuneEnv_scaled)+
   geom_point(aes(color = Site)) # No obvious pattern
 summary(aov(SoilMoist ~ Aspect, data = DuneEnv_scaled)) #nuthin
+
+
+DuneEnv_scaled %>%
+  select(-c(Site, Plot, Aspect, Date, Collectors, dry_weight, Notes))%>%
+  as.matrix()%>%
+  cor(use =  "complete")%>%
+  corrplot( type = "upper", order = "hclust",  tl.col = "black", tl.srt = 45)
+
 ```
+
+
+
 
 
 
@@ -224,18 +242,18 @@ SuccTraits <- rbind(subset(CollectedTraits, Species == "Yellow Sand Verbena"), s
 ### Checking Graphs
 
 ```{r}
-hist(CollectedTraits$LeafLength) #Normal
-hist(CollectedTraits$LeafWidth) #might need Log
-hist(log(CollectedTraits$LeafWidth)) #not really better
-hist(CollectedTraits$LeafThickness) #typo and log transform
-hist(log(CollectedTraits$LeafThickness))
-hist(CollectedTraits$Height) #
-hist(CollectedTraits$BasalDiam)
+densityplot(CollectedTraits$LeafLength) #Normal
+densityplot(CollectedTraits$LeafWidth) #might need Log
+densityplot(log(CollectedTraits$LeafWidth)) #not really better
+densityplot(CollectedTraits$LeafThickness) #typo and log transform
+densityplot(log(CollectedTraits$LeafThickness))
+densityplot(CollectedTraits$Height) #
+densityplot(CollectedTraits$BasalDiam)
 
 
-subset(CollectedTraits, LeafTraits$LeafThickness >20) #Thats a typo
-subset(CollectedTraits, LeafTraits$Height >205) #Okay, maybe legit
-subset(CollectedTraits, LeafTraits$BasalDiam >25) #Just a chonky boi but worth double checking
+#subset(CollectedTraits, LeafTraits$LeafThickness >20) #Thats a typo
+#subset(CollectedTraits, LeafTraits$Height >205) #Okay, maybe legit
+#subset(CollectedTraits, LeafTraits$BasalDiam >25) #Just a chonky boi but worth double checking
 
 
 ```
@@ -277,12 +295,13 @@ Okay, let's figure out how to get some traits from the online world. There is co
 
 library("traits")
 library("taxize")
-taxa_search(Proper_Names[1:20,]$New_Species_Name, db = "traitbank")
-
-
 library("TR8")
+#taxa_search(Proper_Names[1:20,]$New_Species_Name, db = "traitbank")
 
-tr8(species_list = Proper_Names[1:5,]$New_Species_Name, gui_config=TRUE, allow_persistent=TRUE)
+
+
+
+#tr8(species_list = Proper_Names[1:5,]$New_Species_Name, gui_config=TRUE, allow_persistent=TRUE)
 
 
 TryNames <- read_csv(here("EnteredData", "TryAccSpecies.csv"))
@@ -307,16 +326,8 @@ PickedTraits$TraitID
 
 
 
-## Try Data processing
+# Soil Analysis
+
 ```{r}
-TryData<- rtry_import(here("EnteredData", "TryData", "Traits.txt"))
-
-rtry_trans_wider(TryData,  
-                 complete.cases(TraitID))
-
-TryData %>%
-  group_by(AccSpeciesName, TraitName)
-  
-
 ```
 

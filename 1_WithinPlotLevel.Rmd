@@ -1,0 +1,741 @@
+---
+title: "2_WithinPlotLevel"
+author: "Ben J. Rivera"
+date: '2023-01-31'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(vegan)
+library(interactions)
+library(corrplot)
+library(marginaleffects)
+library(lme4)
+library(ggstance)
+library(ggridges)
+
+load(file = ".RData") #this allows me to use the global data. So I can make dataframes elsewhere and then use them here.
+
+```
+
+Okay, the goal of this section is all about understanding how a much plant variation there can be within a 2x2 m quadrat. The goal is to compare the focal communities to their immediate surroundings. If they are tightly conserved, that would suggest a niche-y assembly which will then lead to an examination of which environmental variables matter. If no environmental variables are good, then we either did not measure the correct ones or we can blame spatial auto-correlation (See: 3_WithinSite/BetweenPointsLevel). If it is spatial auto-correlation and/or random, then we are thinking about neutral. I expect the relative importance of the environemnt to vary with environmental stress.
+
+# *Species Composition*
+##Ten Mile
+
+This is a section for analyzing data only from ten mile. I will repeat same process for each location.
+
+```{r}
+#I make unique identifiers for each plot
+TeMi_Names<- colnames(TeMi_Cover)
+TeMi_Names<-gsub('.{1}$', '', TeMi_Names)
+TeMi_Names<-unique(gsub('TeMi.', '', TeMi_Names))
+TeMi_Diss<-data.frame(Plot = rep("", length(TeMi_Names)), Dissimilarity= rep(0, length(TeMi_Names)))
+
+
+for (i in 1:length(TeMi_Names)) {
+  Temp_Cover<-TeMi_Cover %>% select(starts_with(paste0("TeMi.", TeMi_Names[i])))
+  #Temp_Cover<- cbind(Temp_Cover[1], rowSums(Temp_Cover[2:5], na.rm = TRUE)/4)
+  Temp_Diss<-vegdist(t(Temp_Cover), na.rm = TRUE)
+  Temp_Av_Dis<-sum(as.matrix(Temp_Diss)[,1])/4
+  TeMi_Diss$Plot[i]<- TeMi_Names[i]
+  TeMi_Diss$Dissimilarity[i]<- ifelse(is.na(Temp_Av_Dis) == TRUE, 0, ifelse(Temp_Av_Dis == "NaN", 0, Temp_Av_Dis))
+
+}
+
+
+
+densityplot(TeMi_Diss$Dissimilarity)
+
+TeMi_Diss$Plot<- as.numeric(TeMi_Diss$Plot)
+
+TeMi_Diss<-merge(TeMi_Diss, TeMi_RelCords)
+
+TeMi_Diss<-merge(TeMi_Diss, subset(DuneEnv_scaled, Site == "TeMi"))
+
+
+TeMi_pcor<- TeMi_Diss %>%
+  select(-c(Site, Plot, Aspect, Date, Collectors, dry_weight, Notes))%>%
+  as.matrix()%>%
+  cor.mtest(use =  "complete")
+
+TeMi_Diss %>%
+  select(-c(Site, Plot, Aspect, Date, Collectors, dry_weight, Notes))%>%
+  as.matrix()%>%
+  cor(use =  "complete")%>%
+  corrplot( type = "upper", order = "hclust",  tl.col = "black", tl.srt = 45, p.mat = TeMi_pcor$p)
+```
+
+### Graphs and models
+
+#### Distance
+
+```{r}
+densityplot(TeMi_Diss$X)
+densityplot(TeMi_Diss$Y)
+densityplot(TeMi_Diss$Z)
+
+summary(lm(Dissimilarity ~ X, data = TeMi_Diss)) # Distance from waterline not sig
+ggplot(aes(x = X, y = Dissimilarity), data = TeMi_Diss)+
+  geom_point()+
+  labs(x = "X-Coordinate", y = "Compositional Dissimilarity", title = "Ten-Mile (North)")
+
+summary(lm(Dissimilarity ~ Y, data = TeMi_Diss))
+ggplot(aes(x = Y, y = Dissimilarity), data = TeMi_Diss)+
+  geom_point()
+
+summary(lm(Dissimilarity ~ Z, data = TeMi_Diss))
+ggplot(aes(x = Z, y = Dissimilarity), data = TeMi_Diss)+
+  geom_point()
+
+
+summary(lm(Dissimilarity ~ X+Y+Z, data = TeMi_Diss))
+
+
+```
+
+#### Environmental
+
+```{r}
+densityplot(TeMi_Diss$SoilTemp)
+densityplot(TeMi_Diss$SoilMoist)
+densityplot(TeMi_Diss$Slope)
+densityplot(TeMi_Diss$pH)
+densityplot(TeMi_Diss$cond_us.cm)
+densityplot(TeMi_Diss$salinity_ppt)
+
+
+
+summary(lm(Dissimilarity ~ SoilTemp+SoilMoist+Slope+Aspect+pH, data = TeMi_Diss))
+
+summary(lm(Dissimilarity ~ SoilTemp, data = TeMi_Diss))
+ggplot(aes(x = SoilTemp, y = Dissimilarity), data = TeMi_Diss)+
+  geom_point()
+
+
+summary(lm(Dissimilarity ~ SoilMoist, data = TeMi_Diss))
+ggplot(aes(x = SoilMoist, y = Dissimilarity), data = TeMi_Diss)+
+  geom_point()
+
+summary(lm(Dissimilarity ~ SoilTemp*SoilMoist, data = TeMi_Diss))
+
+summary(lm(Dissimilarity ~ Slope, data = TeMi_Diss))
+ggplot(aes(x = Slope, y = Dissimilarity), data = TeMi_Diss)+
+  geom_point()
+
+
+summary(lm(Dissimilarity ~ Aspect, data = TeMi_Diss))
+ggplot(aes(x = Aspect, y = Dissimilarity), data = TeMi_Diss)+
+  geom_point()
+
+######## INTERESTING! ######
+summary(lm(Dissimilarity ~ pH, data = TeMi_Diss))
+ggplot(aes(x = pH, y = Dissimilarity), data = TeMi_Diss)+
+  geom_point()
+
+summary(lm(Dissimilarity ~ cond_us.cm, data = TeMi_Diss))
+ggplot(aes(x = cond_us.cm, y = Dissimilarity), data = TeMi_Diss)+
+  geom_point()+
+  geom_smooth(method = "lm")
+
+summary(lm(Dissimilarity ~ salinity_ppt, data = TeMi_Diss))
+ggplot(aes(x = salinity_ppt, y = Dissimilarity), data = TeMi_Diss)+
+  geom_point()+
+  geom_smooth(method = "lm")
+
+```
+#### Combined
+
+```{r}
+cor.test(x = TeMi_Diss$X, y = TeMi_Diss$salinity_ppt, method = "pearson")
+ggplot(aes(x = X, y = salinity_ppt), data = TeMi_Diss)+ #Weird that X isn't correlated with dissim
+  geom_point()+
+  geom_smooth(method = "lm")
+
+mod.x.temi<-lm(Dissimilarity ~ salinity_ppt*X, data = TeMi_Diss)
+summary(mod.x.temi) #WHAT!?!?!
+interact_plot(mod.x.temi, pred = X, modx = salinity_ppt)
+
+```
+
+#### Negligible effects
+
+```{r}
+
+TeMi.mod.1<- lm(Dissimilarity ~ SoilTemp + SoilMoist + Slope + Aspect + X + Z + pH, data = TeMi_Diss)
+summary(TeMi.mod.1)
+TeMi.Null.1 <- lm(Dissimilarity ~ 1, data = TeMi_Diss)
+anova(TeMi.mod.1, TeMi.Null.1)
+
+TeMi.pre.1<- predictions(TeMi.mod.1)
+
+TeMi.cmp<- avg_comparisons(TeMi.mod.1,  variables =  list(SoilTemp = "minmax", SoilMoist = "minmax", Slope = "minmax", Aspect = "pairwise", X = "minmax", Z = "minmax", pH = "minmax"), conf_level = 0.90, type = "response")
+
+
+TeMi.cmp<-TeMi.cmp %>%
+  group_by(term) %>%
+  summarise_all(.funs = mean)
+
+ggplot(TeMi.cmp, aes(x = estimate,
+                 xmin = conf.low,
+                 xmax = conf.high, 
+                 y = term)) +
+     annotate("rect", xmin = -0.1, xmax = 0.1, ymin = -Inf, ymax = Inf, alpha = .2)+
+  geom_vline(xintercept = c(-0.1, .1), linetype = "dashed") + 
+  geom_vline(xintercept = 0, linetype = "solid", linewidth = 1.5)+
+  geom_errorbarh() + 
+  geom_point(size = 2) +
+  theme_classic()
+
+
+```
+
+
+
+
+## Zmudowski
+```{r}
+#I make unique identifiers for each plot
+Zmud_Names<- colnames(Zmud_Cover)
+Zmud_Names<-gsub('.{1}$', '', Zmud_Names)
+Zmud_Names<-unique(gsub('Zmud.', '', Zmud_Names))
+Zmud_Diss<-data.frame(Plot = rep("", length(Zmud_Names)), Dissimilarity= rep(0, length(Zmud_Names)))
+
+
+for (i in 1:length(Zmud_Names)) {
+  Temp_Cover<-Zmud_Cover %>% select(starts_with(paste0("Zmud.", Zmud_Names[i])))
+  #Temp_Cover<- cbind(Temp_Cover[1], rowSums(Temp_Cover[2:5], na.rm = TRUE)/4)
+  Temp_Diss<-vegdist(t(Temp_Cover), na.rm = TRUE)
+  Temp_Av_Dis<-sum(as.matrix(Temp_Diss)[,1])/4
+  Zmud_Diss$Plot[i]<- Zmud_Names[i]
+  Zmud_Diss$Dissimilarity[i]<- ifelse(is.na(Temp_Av_Dis) == TRUE, 0, ifelse(Temp_Av_Dis == "NaN", 0, Temp_Av_Dis))
+
+}
+
+
+densityplot(Zmud_Diss$Dissimilarity)
+
+Zmud_Diss$Plot<- as.numeric(Zmud_Diss$Plot)
+
+Zmud_Diss<-merge(Zmud_Diss, Zmud_RelCords)
+
+
+Zmud_Diss<-merge(Zmud_Diss, subset(DuneEnv_scaled, Site == "Zmud"))
+
+Zmud_pcor<- Zmud_Diss %>%
+  select(-c(Site, Plot, Aspect, Date, Collectors, dry_weight, Notes, pH, cond_us.cm, salinity_ppt))%>%
+  as.matrix()%>%
+  cor.mtest(use =  "complete")
+
+Zmud_Diss %>%
+  select(-c(Site, Plot, Aspect, Date, Collectors, dry_weight, Notes, pH, cond_us.cm, salinity_ppt))%>%
+  as.matrix()%>%
+  cor(use =  "complete") %>%
+  corrplot(type = "upper", order = "hclust", tl.col = "black", tl.srt = 45, p.mat = Zmud_pcor$p)
+```
+
+### Graphs and models
+
+#### Distance
+```{r}
+
+
+densityplot(Zmud_Diss$X)
+densityplot(Zmud_Diss$Y)
+densityplot(Zmud_Diss$Z)
+
+summary(lm(Dissimilarity ~ X, data = Zmud_Diss)) # Distance from waterline SIG HERE!
+ggplot(aes(x = X, y = Dissimilarity), data = Zmud_Diss)+
+  geom_point()+
+  geom_smooth(method = "lm")+
+  labs(x = "X-Coordinate", y = "Compositional Dissimilarity", title = "Zmudowski (middle)")
+
+ summary(lm(Dissimilarity ~ Y, data = Zmud_Diss))
+ggplot(aes(x = Y, y = Dissimilarity), data = Zmud_Diss)+
+  geom_point()
+
+summary(lm(Dissimilarity ~ Z, data = Zmud_Diss))
+ggplot(aes(x = Z, y = Dissimilarity), data = Zmud_Diss)+
+  geom_point()
+
+
+summary(lm(Dissimilarity ~ X*Y*Z, data = Zmud_Diss))
+
+
+```
+#### Environmental
+
+```{r}
+densityplot(Zmud_Diss$SoilTemp)
+densityplot(Zmud_Diss$SoilMoist)
+densityplot(Zmud_Diss$Slope)
+
+summary(lm(Dissimilarity ~ SoilTemp+SoilMoist+Slope+Aspect, data = Zmud_Diss))
+
+summary(lm(Dissimilarity ~ SoilTemp, data = Zmud_Diss))
+ggplot(aes(x = SoilTemp, y = Dissimilarity), data = Zmud_Diss)+
+  geom_point()+
+  geom_smooth(method = "lm")
+
+
+summary(lm(Dissimilarity ~ log(2+SoilMoist), data = Zmud_Diss))
+ggplot(aes(x = log(2+SoilMoist), y = Dissimilarity), data = Zmud_Diss)+
+  geom_point()
+
+summary(lm(Dissimilarity ~ SoilTemp*SoilMoist, data = Zmud_Diss))
+
+summary(lm(Dissimilarity ~ Slope, data = Zmud_Diss))
+ggplot(aes(x = Slope, y = Dissimilarity), data = Zmud_Diss)+
+  geom_point()
+
+
+summary(lm(Dissimilarity ~ Aspect, data = Zmud_Diss))
+ggplot(aes(x = Aspect, y = Dissimilarity), data = Zmud_Diss)+
+  geom_point()
+```
+#### Combined
+
+```{r}
+summary(lm(Dissimilarity ~ SoilTemp*X, data = Zmud_Diss))
+summary(lm(Dissimilarity ~ SoilMoist*X, data = Zmud_Diss))
+
+summary(lm(Dissimilarity ~ SoilTemp*Y, data = Zmud_Diss))
+summary(lm(Dissimilarity ~ SoilMoist*Y, data = Zmud_Diss))
+
+summary(lm(Dissimilarity ~ SoilTemp*Z, data = Zmud_Diss))
+summary(lm(Dissimilarity ~ SoilMoist*Z, data = Zmud_Diss))
+
+```
+
+
+#### Negligible effects
+
+```{r}
+
+Zmud.mod.1<- lm(Dissimilarity ~ SoilTemp + SoilMoist + Slope + Aspect + X + Z, data = Zmud_Diss)
+summary(Zmud.mod.1)
+Zmud.Null.1 <- lm(Dissimilarity ~ 1, data = Zmud_Diss)
+anova(Zmud.mod.1, Zmud.Null.1)
+
+
+Zmud.cmp<- avg_comparisons(Zmud.mod.1,  variables =  list(SoilTemp = "minmax", SoilMoist = "minmax", Slope = "minmax", Aspect = "pairwise", X = "minmax", Z = "minmax"), conf_level = 0.90, type = "response")
+
+
+Zmud.cmp<-Zmud.cmp %>%
+  group_by(term) %>%
+  summarise_all(.funs = mean)
+
+ggplot(Zmud.cmp, aes(x = estimate,
+                 xmin = conf.low,
+                 xmax = conf.high, 
+                 y = term)) +
+     annotate("rect", xmin = -0.1, xmax = 0.1, ymin = -Inf, ymax = Inf, alpha = .2)+
+  geom_vline(xintercept = c(-0.1, .1), linetype = "dashed") + 
+  geom_vline(xintercept = 0, linetype = "solid", linewidth = 1.5)+
+  geom_errorbarh() + 
+  geom_point(size = 2) +
+  theme_classic()
+
+
+```
+## Guadalupe-Nipomo
+```{r}
+#I make unique identifiers for each plot
+GuNi_Names<- colnames(GuNi_Cover)
+GuNi_Names<-gsub('.{1}$', '', GuNi_Names)
+GuNi_Names<-unique(gsub('GuNi.', '', GuNi_Names))
+GuNi_Diss<-data.frame(Plot = rep("", length(GuNi_Names)), Dissimilarity= rep(0, length(GuNi_Names)))
+
+
+for (i in 1:length(GuNi_Names)) {
+  Temp_Cover<-GuNi_Cover %>% select(starts_with(paste0("GuNi.", GuNi_Names[i])))
+  #Temp_Cover<- cbind(Temp_Cover[1], rowSums(Temp_Cover[2:5], na.rm = TRUE)/4)
+  Temp_Diss<-vegdist(t(Temp_Cover), na.rm = TRUE)
+  Temp_Av_Dis<-sum(as.matrix(Temp_Diss)[,1])/4
+  GuNi_Diss$Plot[i]<- GuNi_Names[i]
+  GuNi_Diss$Dissimilarity[i]<- ifelse(is.na(Temp_Av_Dis) == TRUE, 0, ifelse(Temp_Av_Dis == "NaN", 0, Temp_Av_Dis))
+
+}
+
+
+densityplot(GuNi_Diss$Dissimilarity)
+
+GuNi_Diss$Plot<- as.numeric(GuNi_Diss$Plot)
+
+GuNi_Diss<-merge(GuNi_Diss, GuNi_RelCords)
+
+GuNi_Diss<-merge(GuNi_Diss, subset(DuneEnv_scaled, Site == "GuNi"))
+
+
+GuNi_pcor<- GuNi_Diss %>%
+  select(-c(Site, Plot, Aspect, Date, Collectors, dry_weight, Notes))%>%
+  as.matrix()%>%
+  cor.mtest(use =  "complete")
+
+
+GuNi_Diss %>%
+  select(-c(Site, Plot, Aspect, Date, Collectors, dry_weight, Notes))%>%
+  as.matrix()%>%
+  cor(use =  "complete")%>%
+  corrplot( type = "upper", order = "hclust",  tl.col = "black", tl.srt = 45, p.mat = GuNi_pcor$p)
+
+
+```
+
+### Graphs and models
+
+#### Distance
+```{r}
+densityplot(GuNi_Diss$X)
+densityplot(GuNi_Diss$Y)
+densityplot(GuNi_Diss$Z)
+
+summary(lm(Dissimilarity ~ X, data = GuNi_Diss)) # Distance from waterline not sig
+ggplot(aes(x = X, y = Dissimilarity), data = GuNi_Diss)+
+  geom_point()+
+  labs(x = "X-Coordinate", y = "Compositional Dissimilarity", title = "Guadalupe-Nipomo (South)")
+
+summary(lm(Dissimilarity ~ Y, data = GuNi_Diss))
+ggplot(aes(x = Y, y = Dissimilarity), data = GuNi_Diss)+
+  geom_point()
+
+summary(lm(Dissimilarity ~ Z, data = GuNi_Diss))
+ggplot(aes(x = Z, y = Dissimilarity), data = GuNi_Diss)+
+  geom_point()
+
+
+summary(lm(Dissimilarity ~ X+Y+Z,  data = GuNi_Diss))
+
+
+```
+
+
+
+#### Environmental
+
+```{r}
+densityplot(GuNi_Diss$SoilTemp)
+densityplot(GuNi_Diss$SoilMoist)
+densityplot(GuNi_Diss$Slope)
+densityplot(GuNi_Diss$pH)
+densityplot(GuNi_Diss$cond_us.cm)
+densityplot(GuNi_Diss$salinity_ppt)
+
+```
+
+
+```{r}
+
+summary(lm(Dissimilarity ~ SoilTemp+SoilMoist+Slope+Aspect+pH+salinity_ppt, data = GuNi_Diss))
+
+summary(lm(Dissimilarity ~ SoilTemp, data = GuNi_Diss))
+ggplot(aes(x = SoilTemp, y = Dissimilarity), data = GuNi_Diss)+
+  geom_point()
+
+
+summary(lm(Dissimilarity ~ SoilMoist, data = GuNi_Diss))
+ggplot(aes(x = SoilMoist, y = Dissimilarity), data = GuNi_Diss)+
+  geom_point()
+
+summary(lm(Dissimilarity ~ SoilTemp*SoilMoist, data = GuNi_Diss))
+
+summary(lm(Dissimilarity ~ Slope, data = GuNi_Diss))
+ggplot(aes(x = Slope, y = Dissimilarity), data = GuNi_Diss)+
+  geom_point()
+
+
+summary(lm(Dissimilarity ~ Aspect, data = GuNi_Diss))
+ggplot(aes(x = Aspect, y = Dissimilarity), data = GuNi_Diss)+
+  geom_point()
+
+summary(lm(Dissimilarity ~ pH, data = GuNi_Diss))
+ggplot(aes(x = pH, y = Dissimilarity), data = GuNi_Diss)+
+  geom_point()
+
+summary(lm(Dissimilarity ~ cond_us.cm, data = GuNi_Diss))
+ggplot(aes(x = cond_us.cm, y = Dissimilarity), data = GuNi_Diss)+
+  geom_point()
+
+summary(lm(Dissimilarity ~ salinity_ppt, data = GuNi_Diss))
+ggplot(aes(x = salinity_ppt, y = Dissimilarity), data = GuNi_Diss)+
+  geom_point()
+
+
+```
+
+
+#### Negligible effects
+
+```{r}
+
+GuNi.mod.1<- lm(Dissimilarity ~ SoilTemp + SoilMoist + Slope + Aspect + X + Z + pH, data = subset(GuNi_Diss, is.na(pH) == FALSE))
+summary(GuNi.mod.1)
+GuNi.Null.1 <- lm(Dissimilarity ~ 1, data = subset(GuNi_Diss, is.na(pH) == FALSE))
+anova(GuNi.mod.1, GuNi.Null.1)
+
+GuNi.pre.1<- predictions(GuNi.mod.1)
+
+GuNi.cmp<- avg_comparisons(GuNi.mod.1,  variables =  list(SoilTemp = "minmax", SoilMoist = "minmax", Slope = "minmax", Aspect = "pairwise", X = "minmax", Z = "minmax", pH = "minmax"), conf_level = 0.90, type = "response")
+
+
+GuNi.cmp<-GuNi.cmp %>%
+  group_by(term) %>%
+  summarise_all(.funs = mean)
+
+ggplot(GuNi.cmp, aes(x = estimate,
+                 xmin = conf.low,
+                 xmax = conf.high, 
+                 y = term)) +
+     annotate("rect", xmin = -0.1, xmax = 0.1, ymin = -Inf, ymax = Inf, alpha = .2)+
+  geom_vline(xintercept = c(-0.1, .1), linetype = "dashed") + 
+  geom_vline(xintercept = 0, linetype = "solid", linewidth = 1.5)+
+  geom_errorbarh() + 
+  geom_point(size = 2) +
+  theme_classic()
+
+
+```
+
+# Mixed
+
+```{r}
+Comb_Dis<-rbind(TeMi_Diss, Zmud_Diss, GuNi_Diss)
+
+Comb_pcor<- Comb_Dis %>%
+  select(-c(Site, Plot, Aspect, Date, Collectors, dry_weight, Notes))%>%
+  as.matrix()%>%
+  cor.mtest(use =  "complete")
+
+
+Comb_Dis %>%
+  select(-c(Site, Plot, Aspect, Date, Collectors, dry_weight, Notes))%>%
+  as.matrix()%>%
+  cor(use =  "complete")%>%
+  corrplot( type = "upper", order = "hclust",  tl.col = "black", tl.srt = 45, p.mat = GuNi_pcor$p, diag = FALSE)
+```
+
+```{r}
+
+densityplot(Comb_Dis$Dissimilarity)
+
+densityplot(subset(Comb_Dis, Dissimilarity >0)$Dissimilarity)
+
+
+
+
+summary(lm(Dissimilarity ~ X, data = Comb_Dis)) # Distance from waterline not sig
+ggplot(aes(x = X, y = Dissimilarity), data = Comb_Dis)+
+  geom_point()+
+  labs(x = "X-Coordinate", y = "Compositional Dissimilarity", title = "Guadalupe-Nipomo (South)")
+
+summary(lm(Dissimilarity ~ Y, data = Comb_Dis))
+ggplot(aes(x = Y, y = Dissimilarity), data = Comb_Dis)+
+  geom_point()
+
+summary(lm(Dissimilarity ~ Z, data = Comb_Dis))
+ggplot(aes(x = Z, y = Dissimilarity), data = Comb_Dis)+
+  geom_point()
+
+
+summary(lm(Dissimilarity ~ X+Y+Z,  data = Comb_Dis))
+
+```
+
+
+```{r}
+
+summary(lm(Dissimilarity ~ SoilTemp+SoilMoist+Slope+Aspect+pH+salinity_ppt, data = Comb_Dis))
+
+summary(lm(Dissimilarity ~ SoilTemp, data = Comb_Dis))
+ggplot(aes(x = SoilTemp, y = Dissimilarity), data = Comb_Dis)+
+  geom_point()
+
+
+summary(lm(Dissimilarity ~ SoilMoist, data = Comb_Dis))
+ggplot(aes(x = SoilMoist, y = Dissimilarity), data = Comb_Dis)+
+  geom_point()
+
+summary(lm(Dissimilarity ~ SoilTemp*SoilMoist, data = Comb_Dis))
+
+summary(lm(Dissimilarity ~ Slope, data = Comb_Dis))
+ggplot(aes(x = Slope, y = Dissimilarity), data = Comb_Dis)+
+  geom_point()
+
+
+summary(lm(Dissimilarity ~ Aspect, data = Comb_Dis))
+ggplot(aes(x = Aspect, y = Dissimilarity), data = Comb_Dis)+
+  geom_point()
+
+summary(lm(Dissimilarity ~ pH, data = Comb_Dis))
+ggplot(aes(x = pH, y = Dissimilarity), data = Comb_Dis)+
+  geom_point()
+
+summary(lm(Dissimilarity ~ cond_us.cm, data = Comb_Dis))
+ggplot(aes(x = cond_us.cm, y = Dissimilarity), data = Comb_Dis)+
+  geom_point()
+
+summary(lm(Dissimilarity ~ salinity_ppt, data = Comb_Dis)) #***
+ggplot(aes(x = salinity_ppt, y = Dissimilarity), data = Comb_Dis)+
+  geom_point()+
+  geom_smooth(method = "lm")
+
+
+```
+
+### Negligible Effects
+
+```{r}
+Mixed.mod.1 <- lmer(Dissimilarity ~ SoilTemp + SoilMoist + Slope + Aspect +  X +  Z  + (1|Site), data = subset(Comb_Dis, Dissimilarity >0.0))
+summary(Mixed.mod.1)
+Mixed.Null.1 <- lmer(Dissimilarity ~ 1  + (1|Site), data = subset(Comb_Dis, Dissimilarity >0.0))
+Mixed.ST<- lmer(Dissimilarity ~ SoilTemp  + (1|Site), data = subset(Comb_Dis, Dissimilarity >0.0))
+Mixed.X<- lmer(Dissimilarity ~ X  + (1|Site), data = subset(Comb_Dis, Dissimilarity >0.0))
+
+anova(Mixed.mod.1, Mixed.Null.1)
+anova(Mixed.ST, Mixed.Null.1)
+anova(Mixed.X, Mixed.Null.1)
+anova(Mixed.ST, Mixed.X)
+
+Mixed.cmp<- avg_comparisons(Mixed.mod.1, variables = list(SoilTemp = "minmax", SoilMoist = "minmax", Slope = "minmax", Aspect = "pairwise", X = "minmax", Z = "minmax"),   conf_level = 0.90, type = "response")
+
+Mixed.cmp <- as.data.frame(Mixed.cmp)
+
+
+for(j in 1:dim(Mixed.cmp)[1]){
+  if(Mixed.cmp$term[j] == "Aspect"){
+    if(Mixed.cmp$estimate[j] <= 0){
+   Mixed.cmp$estimate[j] <- (Mixed.cmp$estimate[j] * -1)
+   NewLow <- (Mixed.cmp$conf.high[j] * -1)
+   Mixed.cmp$conf.high[j] <- (Mixed.cmp$conf.low[j] * -1)
+   Mixed.cmp$conf.low[j] <- NewLow
+  } 
+}
+}
+
+
+
+ggplot(Mixed.cmp, aes(x = estimate,
+                 xmin = conf.low,
+                 xmax = conf.high, 
+                 y = term,
+                 group = contrast)) +
+     annotate("rect", xmin = -0.1, xmax = 0.1, ymin = -Inf, ymax = Inf, alpha = .2)+
+  geom_vline(xintercept = c(-0.1, .1), linetype = "dashed") + 
+  geom_vline(xintercept = 0, linetype = "solid", linewidth = 1.5)+
+  geom_errorbarh(aes(xmin = conf.low,  xmax = conf.high,),position = position_dodgev(height = 1.5)) + 
+  geom_point(size = 2, position = position_dodgev(height = 1.5)) +
+  theme_classic()
+
+
+Mixed.cmp<-Mixed.cmp %>%
+  group_by(term) %>%
+  summarise_all(.funs = mean)
+
+
+
+ggplot(Mixed.cmp, aes(x = estimate,
+                 xmin = conf.low,
+                 xmax = conf.high, 
+                 y = term,
+                 group = contrast)) +
+     annotate("rect", xmin = -0.1, xmax = 0.1, ymin = -Inf, ymax = Inf, alpha = .2)+
+  geom_vline(xintercept = c(-0.1, .1), linetype = "dashed") + 
+  geom_vline(xintercept = 0, linetype = "solid", linewidth = 1.5)+
+  geom_errorbarh(aes(xmin = conf.low,  xmax = conf.high,),position = position_dodgev(height = 1.5)) + 
+  geom_point(size = 4, position = position_dodgev(height = 1.5)) +
+  theme_classic()+
+  labs(x = "Estimated Change in Community Dissimilarity", y = "Term")+
+  theme(text = element_text(family = "serif", size = 18))
+
+ggsave("Within-Marginal.png", dpi = 600, height = 7, width = 10)
+
+plot_predictions(Mixed.mod.1, condition = "SoilTemp")+
+  geom_point(data = subset(Comb_Dis, Dissimilarity >0), size = 3,aes(x = SoilTemp, y = Dissimilarity, color = Site, shape = Site))+
+  labs(x = "Soil Temperature (°C)", y =  "Community Dissimilarity")+
+  scale_color_manual(labels = c("Guadalupe-Nipomo", "Ten Mile", "Zmudowski"), values = c("#d55e00", "#cc79a7", "#009e73"), name = "Site")+
+  scale_shape_manual(labels = c("Guadalupe-Nipomo", "Ten Mile", "Zmudowski"), values = c(1,2,0), name = "Site")+
+  theme_classic()+
+  theme(text = element_text(family = "serif", size = 18))
+  #geom_smooth(data = subset(Comb_Dis, Dissimilarity >0), aes(x = SoilTemp, y = Dissimilarity), method = "lm")
+
+ggsave("Within-SoilTemp.png", dpi = 600, height = 7, width = 10)
+
+
+```
+
+#### Randomization Test
+
+```{r}
+Tracker<- data.frame()
+SingleTrack<-0
+
+for (i in 1:100) {
+  
+  Rand.1<- transform(Comb_Dis, Dissimilarity = sample(Dissimilarity) )
+  Rand.mod.1 <- lmer(Dissimilarity ~ SoilTemp + SoilMoist + Slope + Aspect + X +  Z  + (1|Site), data = subset(Rand.1, Dissimilarity >0))
+  
+  
+  while(isSingular(Rand.mod.1) == TRUE){
+    SingleTrack <- SingleTrack + 1
+   Rand.1<- transform(Comb_Dis, Dissimilarity = sample(Dissimilarity) )
+  Rand.mod.1 <- lmer(Dissimilarity ~ SoilTemp + SoilMoist + Slope + Aspect + X +  Z  + (1|Site), data = subset(Rand.1, Dissimilarity >0))
+    } 
+  
+    Rand.cmp<- avg_comparisons(Rand.mod.1, variables = list(SoilTemp = "minmax", SoilMoist = "minmax", Slope = "minmax", Aspect = "pairwise", X = "minmax", Z = "minmax"),   conf_level = 0.90, type = "response")
+      
+  for(j in 1:dim(Rand.cmp)[1]){
+  if(Rand.cmp$term[j] == "Aspect"){
+    if(Rand.cmp$estimate[j] <= 0){
+   Rand.cmp$estimate[j] <- (Rand.cmp$estimate[j] * -1)
+   NewLow <- (Rand.cmp$conf.high[j] * -1)
+   Rand.cmp$conf.high[j] <- (Rand.cmp$conf.low[j] * -1)
+   Rand.cmp$conf.low[j] <- NewLow
+  } 
+}
+}
+  
+  Rand.cmp<-Rand.cmp %>%
+    group_by(term) %>%
+    summarise_all(.funs = mean)
+
+   Run <- rep(i, dim(Rand.cmp)[1])
+    Rand.cmp<- cbind(Rand.cmp, Run)
+
+
+    
+    
+    Tracker <- rbind(Tracker, Rand.cmp)
+    print(i)
+    
+  
+}
+
+
+    # ggplot(Tracker, aes(x = estimate,
+    #                xmin = conf.low,
+    #                xmax = conf.high,
+    #                y = term,
+    #                group = contrast)) +
+    #   annotate("rect", xmin = -0.1, xmax = 0.1, ymin = -Inf, ymax = Inf, alpha = .2)+
+    #   geom_vline(xintercept = c(-0.1, .1), linetype = "dashed") +
+    #   geom_vline(xintercept = 0, linetype = "solid", linewidth = 1.5)+
+    #   geom_errorbarh(position = position_dodgev(height = 1.5)) +
+    #   geom_point(size = 2, position = position_dodgev(height = 1.5)) +
+    #   theme_classic()
+    
+ggplot(Tracker, aes(x = estimate, 
+                    y = term, 
+                    group = term))+
+  geom_density_ridges(fill = "blue", alpha = 0.75)+
+      annotate("rect", xmin = -0.1, xmax = 0.1, ymin = -Inf, ymax = Inf, alpha = .2)+
+      geom_vline(xintercept = c(-0.1, .1), linetype = "dashed")
+
+length(unique(Tracker$Run))
+
+Tracker %>% group_by(term) %>% summarize_all(mean)
+```
+
+

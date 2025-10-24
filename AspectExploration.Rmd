@@ -1,0 +1,378 @@
+---
+title: "Categorical Aspect and Dissimilarity Exploration"
+author: "Ben J. Rivera"
+date: '2023-01-31'
+output: html_document
+---
+
+Are you like me where you come across incredibly specific problems with ecological data that nobody seems to be talking about despite it seeming like it should be common? If you are, then stick around because you might like this! 
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(vegan)
+library(circular)
+library(climaemet)
+
+load(file = ".RData") #this allows me to use the global data. So I can make dataframes elsewhere and then use them here.
+
+```
+
+
+```{r}
+
+plotsetup<- data.frame(direction= c("N", "NE", "E", "SE", "S", "SW","W","NW"), 
+                       angle = seq(0,315, 45) )
+
+ggplot(plotsetup)+
+  coord_polar()+
+  scale_x_continuous(limits = c(0,360))+
+  scale_y_continuous(limits = c(0,1))+
+  annotate("text",label = plotsetup$direction,x = plotsetup$angle, y = 1)
+
+
+
+
+```
+
+# Four Column Solution
+```{r}
+
+FourCol <- data.frame(row.names = c("N", "NE", "E", "SE", "S", "SW","W","NW"), 
+                      N = c(1,1,0,0,0,0,0,1), 
+                      S = c(0,0,0,1,1,1,0,0), 
+                      W = c(0,0,0,0,0,1,1,1), 
+                      E = c(0,1,1,1,0,0,0,0))
+
+FourDis<- vegdist(FourCol, method = "gower", upper = TRUE) # 
+FourDis
+dissimsums1<-colSums(as.matrix(FourDis))
+dissimsums1
+
+
+FourDisNorth<-cbind(plotsetup, dissim = as.matrix(FourDis)[,1])
+
+FourDisNE<- cbind(plotsetup, dissim = as.matrix(FourDis)[,2])
+
+
+ggplot(data = FourDisNorth, aes(x = angle, y = dissim, color = dissim, fill = direction))+
+  coord_polar(clip = "off")+
+  scale_x_continuous(limits = c(0,360))+
+  scale_y_continuous(limits = c(0,1))+
+  geom_label(aes(label = direction, x = angle, y =1), color = "black")+
+  geom_segment(aes(y = 0, yend = dissim), size = 1.5)+
+  geom_point(size= 5, shape = 21)+ 
+  scale_color_gradient2( high="red", 
+                        limits = c(0, 1), name = "Dissimilarity")+
+  labs(title = "Four Column Solution", subtitle = "North's Comparisons", y = "Calculated Dissimilarity")+
+  scale_fill_discrete(guide = "none")
+
+ggplot(data = FourDisNE, aes(x = angle, y = dissim, color = dissim, fill = direction))+
+  coord_polar(clip = "off")+
+  scale_x_continuous(limits = c(0,360))+
+  scale_y_continuous(limits = c(0,1))+
+  geom_label(aes(label = direction, x = angle, y =1), color = "black")+
+  geom_segment(aes(y = 0, yend = dissim), size = 1.5)+
+  geom_point(size= 5, shape = 21)+ 
+  scale_color_gradient2( high="red", 
+                        limits = c(0, 1), name = "Dissimilarity")+
+  labs(title = "Four Column Solution", subtitle = "NorthEast's Comparisons", y = "Calculated Dissimilarity")+
+  scale_fill_discrete(guide = "none")
+```
+
+```{r}
+
+FourColHalf<- data.frame(row.names = c("N", "NE", "E", "SE", "S", "SW","W","NW"), 
+                      N = c(1,0.5,0,0,0,0,0,0.5), 
+                      S = c(0,0,0,0.5,1,0.5,0,0), 
+                      W = c(0,0,0,0,0,0.5,1,0.5), 
+                      E = c(0,0.5,1,0.5,0,0,0,0))
+
+FourColHalf
+rowSums(FourColHalf)
+FourDisHalf<- vegdist(FourColHalf, method = "gower", upper = TRUE) # bray-curtis dissim
+FourDisHalf
+as.matrix(FourDisHalf)
+colSums(as.matrix(FourDisHalf))
+
+FourHalfNorth<-cbind(plotsetup, dissim = as.matrix(FourDisHalf)[,1])
+
+FourHalfNE<- cbind(plotsetup, dissim = as.matrix(FourDisHalf)[,2])
+
+cor(FourDis, FourDisHalf)
+
+
+ggplot(data = FourHalfNorth, aes(x = angle, y = dissim, color = dissim, fill = direction))+
+  coord_polar(clip = "off")+
+  scale_x_continuous(limits = c(0,360))+
+  scale_y_continuous(limits = c(0,1))+
+  geom_label(aes(label = direction, x = angle, y =1), color = "black")+
+  geom_segment(aes(y = 0, yend = dissim), size = 1.5)+
+  geom_point(size= 5, shape = 21)+ 
+  scale_color_gradient2( high="red", 
+                        limits = c(0, 1), name = "Dissimilarity")+
+  labs(title = "Four Column with .5's Solution", subtitle = "North's Comparisons")+
+  scale_fill_discrete(guide = "none")
+
+ggplot(data = FourHalfNE, aes(x = angle, y = dissim, color = dissim, fill = direction))+
+  coord_polar(clip = "off")+
+  scale_x_continuous(limits = c(0,360))+
+  scale_y_continuous(limits = c(0,1))+
+  geom_label(aes(label = direction, x = angle, y =1), color = "black")+
+  geom_segment(aes(y = 0, yend = dissim), size = 1.5)+
+  geom_point(size= 5, shape = 21)+ 
+  scale_color_gradient2( high="red", 
+                        limits = c(0, 1), name = "Dissimilarity")+
+  labs(title = "Four Column with .5's Solution", subtitle = "NorthEast's Comparisons", y = "Calculated Dissimilarity")+
+  scale_fill_discrete(guide = "none")
+
+
+```
+
+```{r}
+FourColWeird<- data.frame(row.names = c("N", "NW","W","SW", "S", "SE","E","NE"), 
+                      N_S = c(1,0.75,0.5,0.25,0,0.25,0.5,0.75), 
+                      NW_SE = c(0.75,1,0.75,0.5,0.25,0,0.25,0.5), 
+                      E_W = c(0.5,0.25,0,0.25,0.5,0.75,1,0.75), 
+                      NE_SW = c(0.75,0.5,0.25,0,0.25,0.5,0.75,1))
+
+FourColWeird
+rowSums(FourColWeird)
+
+FourDisWeird<- vegdist(FourColWeird, method = 'gower', upper = TRUE)
+
+
+FourDisWeird #HOLY SHIT I THINK THIS IS THE ONE THAT ACTUALLY WORKS WTF
+colSums(as.matrix(FourDisWeird))
+
+FourWeirdNorth<-cbind(plotsetup, dissim = as.matrix(FourDisWeird)[,1])
+
+FourWeirdNE<- cbind(plotsetup, dissim = as.matrix(FourDisWeird)[,2])
+
+cor(FourDis, FourDisHalf)
+
+
+ggplot(data = FourWeirdNorth, aes(x = angle, y = dissim, color = dissim, fill = direction))+
+  coord_polar(clip = "off")+
+  scale_x_continuous(limits = c(0,360))+
+  scale_y_continuous(limits = c(0,1))+
+  geom_label(aes(label = direction, x = angle, y =1), color = "black")+
+  geom_segment(aes(y = 0, yend = dissim), size = 1.5)+
+  geom_point(size= 5, shape = 21)+ 
+  scale_color_gradient2( high="red", 
+                        limits = c(0, 1), name = "Dissimilarity")+
+  labs(title = "Four Column with .25's Solution", subtitle = "North's Comparisons")+
+  scale_fill_discrete(guide = "none")
+
+ggplot(data = FourWeirdNE, aes(x = angle, y = dissim, color = dissim, fill = direction))+
+  coord_polar(clip = "off")+
+  scale_x_continuous(limits = c(0,360))+
+  scale_y_continuous(limits = c(0,1))+
+  geom_label(aes(label = direction, x = angle, y =1), color = "black")+
+  geom_segment(aes(y = 0, yend = dissim), size = 1.5)+
+  geom_point(size= 5, shape = 21)+ 
+  scale_color_gradient2( high="red", 
+                        limits = c(0, 1), name = "Dissimilarity")+
+  labs(title = "Four Column with .25's Solution", subtitle = "NorthEast's Comparisons", y = "Calculated Dissimilarity")+
+  scale_fill_discrete(guide = "none")
+
+```
+
+Hmmm, N and NW are .333 dissimilar which is okay. SE and NE and .5 dissimilar which I don't quite understand why that isn't also .333. Hmmmm
+
+#Two Column solution
+
+
+SOMETHING IS WRONG HERE
+```{r}
+TwoCol <- data.frame(row.names = c("N", "NW","W","SW", "S", "SE","E","NE"), 
+                     NS = c(1,1,0.5,0,0,0,0.5,1),
+                     EW = c(0.5,0,0,0,0.5,1,1,1))
+TwoCol
+
+TwoDis<- vegdist(TwoCol, method = "gower", upper = TRUE) # bray-curtis dissim
+round(TwoDis, 2)
+
+
+dist(FourCol, method = "binary")
+(TwoDis == FourDis)
+
+TwoHalfNorth<-cbind(plotsetup, dissim = as.matrix(TwoDis)[,1])
+
+TwoHalfNE<- cbind(plotsetup, dissim = as.matrix(TwoDis)[,2])
+
+
+
+ggplot(data = TwoHalfNorth, aes(x = angle, y = dissim, color = dissim, fill = direction))+
+  coord_polar(clip = "off")+
+  scale_x_continuous(limits = c(0,360))+
+  scale_y_continuous(limits = c(0,1))+
+  geom_label(aes(label = direction, x = angle, y =1), color = "black")+
+  geom_segment(aes(y = 0, yend = dissim), size = 1.5)+
+  geom_point(size= 5, shape = 21)+ 
+  scale_color_gradient2( high="red", 
+                        limits = c(0, 1), name = "Dissimilarity")+
+  labs(title = "Two Column with .5's Solution", subtitle = "North's Comparisons")+
+  scale_fill_discrete(guide = "none")
+
+ggplot(data = TwoHalfNE, aes(x = angle, y = dissim, color = dissim, fill = direction))+
+  coord_polar(clip = "off")+
+  scale_x_continuous(limits = c(0,360))+
+  scale_y_continuous(limits = c(0,1))+
+  geom_label(aes(label = direction, x = angle, y =1), color = "black")+
+  geom_segment(aes(y = 0, yend = dissim), size = 1.5)+
+  geom_point(size= 5, shape = 21)+ 
+  scale_color_gradient2( high="red", 
+                        limits = c(0, 1), name = "Dissimilarity")+
+  labs(title = "Two Column with .5's Solution", subtitle = "NorthEast's Comparisons", y = "Calculated Dissimilarity")+
+  scale_fill_discrete(guide = "none")
+
+```
+
+```{r}
+TwoColNeg<- data.frame(row.names = c("N", "NW","W","SW", "S", "SE","E","NE"), 
+                     NS = c(1,1,0,-1,-1,-1,0,1),
+                     EW = c(0,-1,-1,-1,0,1,1,1))
+
+TwoColNeg
+TwoDisNeg<- vegdist(TwoColNeg, method = "gower", upper = TRUE) # bray-curtis dissim
+TwoDisNeg
+
+(TwoDis == TwoDisNeg)
+
+TwoNegNorth<-cbind(plotsetup, dissim = as.matrix(TwoDisNeg)[,1])
+
+TwoNegNE<- cbind(plotsetup, dissim = as.matrix(TwoDisNeg)[,2])
+
+ggplot(data = TwoNegNorth, aes(x = angle, y = dissim, color = dissim, fill = direction))+
+  coord_polar(clip = "off")+
+  scale_x_continuous(limits = c(0,360))+
+  scale_y_continuous(limits = c(0,1))+
+  geom_label(aes(label = direction, x = angle, y =1), color = "black")+
+  geom_segment(aes(y = 0, yend = dissim), size = 1.5)+
+  geom_point(size= 5, shape = 21)+ 
+  scale_color_gradient2( high="red", 
+                        limits = c(0, 1), name = "Dissimilarity")+
+  labs(title = "Two Column with Negatives Solution", subtitle = "North's Comparisons")+
+  scale_fill_discrete(guide = "none")
+
+ggplot(data = TwoNegNE, aes(x = angle, y = dissim, color = dissim, fill = direction))+
+  coord_polar(clip = "off")+
+  scale_x_continuous(limits = c(0,360))+
+  scale_y_continuous(limits = c(0,1))+
+  geom_label(aes(label = direction, x = angle, y =1), color = "black")+
+  geom_segment(aes(y = 0, yend = dissim), size = 1.5)+
+  geom_point(size= 5, shape = 21)+ 
+  scale_color_gradient2( high="red", 
+                        limits = c(0, 1), name = "Dissimilarity")+
+  labs(title = "Two Column with Negatives Solution", subtitle = "NorthEast's Comparisons", y = "Calculated Dissimilarity")+
+  scale_fill_discrete(guide = "none")
+
+```
+# oops 3 column
+
+```{r}
+ThreeCol<- data.frame(row.names = c("N", "NW","W","SW", "S", "SE","E","NE"), 
+                      N_S = c(1,0.75,0.5,0.25,0,0.25,0.5,0.75), 
+                      NW_SE = c(0.75,1,0.75,0.5,0.25,0,0.25,0.5), 
+                      E_W = c(0.5,0.25,0,0.25,0.5,0.75,1,0.75) 
+                     )
+
+ThreeCol
+rowSums(FourColWeird)
+
+ThreeDis<- vegdist(ThreeCol, method = 'gower')
+
+
+ThreeDis #not even close
+
+
+ThreeColNorth<-cbind(plotsetup, dissim = as.matrix(ThreeDis)[,1])
+
+ThreeColNE<- cbind(plotsetup, dissim = as.matrix(ThreeDis)[,2])
+
+ggplot(data = ThreeColNorth, aes(x = angle, y = dissim, color = dissim, fill = direction))+
+  coord_polar(clip = "off")+
+  scale_x_continuous(limits = c(0,360))+
+  scale_y_continuous(limits = c(0,1))+
+  geom_label(aes(label = direction, x = angle, y =1), color = "black")+
+  geom_segment(aes(y = 0, yend = dissim), size = 1.5)+
+  geom_point(size= 5, shape = 21)+ 
+  scale_color_gradient2( high="red", 
+                        limits = c(0, 1), name = "Dissimilarity")+
+  labs(title = "Three Column Solution", subtitle = "North's Comparisons")+
+  scale_fill_discrete(guide = "none")
+
+ggplot(data = ThreeColNE, aes(x = angle, y = dissim, color = dissim, fill = direction))+
+  coord_polar(clip = "off")+
+  scale_x_continuous(limits = c(0,360))+
+  scale_y_continuous(limits = c(0,1))+
+  geom_label(aes(label = direction, x = angle, y =1), color = "black")+
+  geom_segment(aes(y = 0, yend = dissim), size = 1.5)+
+  geom_point(size= 5, shape = 21)+ 
+  scale_color_gradient2( high="red", 
+                        limits = c(0, 1), name = "Dissimilarity")+
+  labs(title = "Three Column Solution", subtitle = "NorthEast's Comparisons", y = "Calculated Dissimilarity")+
+  scale_fill_discrete(guide = "none")
+
+```
+
+
+# circular
+
+```{r}
+
+Circle <- data.frame(row.names = c("N", "NW","W","SW", "S", "SE","E","NE"), 
+                     Angle = c(0,45,90,135,180,225,270,315))
+
+Circle
+dist.circular(Circle)
+Circ<-circular(Circle, rotation = "clock")
+dist.circular(Circ)
+
+
+Cic<-circular(Circle, units = "degrees", modulo = "2pi", rotation = "clock", template = "geographics")
+Cic
+
+plot.circular(Cic)
+
+CircleDiss<-dist.circular(Cic, method = "geodesic", upper = TRUE)/pi #well this actually make the most sense
+CircleDiss
+
+CircleNorth<-cbind(plotsetup, dissim = as.matrix(CircleDiss)[,1])
+
+CircleNE<- cbind(plotsetup, dissim = as.matrix(CircleDiss)[,2])
+
+
+
+ggplot(data = CircleNorth, aes(x = angle, y = dissim, color = dissim, fill = direction))+
+  coord_polar(clip = "off")+
+  scale_x_continuous(limits = c(0,360))+
+  scale_y_continuous(limits = c(0,1))+
+  geom_label(aes(label = direction, x = angle, y =1), color = "black")+
+  geom_segment(aes(y = 0, yend = dissim), size = 1.5)+
+  geom_point(size= 5, shape = 21)+ 
+  scale_color_gradient2( high="red", 
+                        limits = c(0, 1), name = "Dissimilarity")+
+  labs(title = "Circle Solution", subtitle = "North's Comparisons")+
+  scale_fill_discrete(guide = "none")
+
+ggplot(data = CircleNE, aes(x = angle, y = dissim, color = dissim, fill = direction))+
+  coord_polar(clip = "off")+
+  scale_x_continuous(limits = c(0,360))+
+  scale_y_continuous(limits = c(0,1))+
+  geom_label(aes(label = direction, x = angle, y =1), color = "black")+
+  geom_segment(aes(y = 0, yend = dissim), size = 1.5)+
+  geom_point(size= 5, shape = 21)+ 
+  scale_color_gradient2( high="red", 
+                        limits = c(0, 1), name = "Dissimilarity")+
+  labs(title = "Circle Solution", subtitle = "NorthEast's Comparisons", y = "Calculated Dissimilarity")+
+  scale_fill_discrete(guide = "none")
+
+
+```
+
+
+

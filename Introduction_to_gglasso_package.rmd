@@ -1,0 +1,86 @@
+---
+title: "Introduction to gglasso"
+author: "Yi Yang"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+
+## Install the package
+
+```{r, eval=FALSE}
+# on CRAN
+#install.packages("gglasso")
+
+# dev version on GitHub
+#pacman::p_load_gh('emeryyi/gglasso')
+```
+
+
+## Least squares regression
+```{r}
+library(gglasso)
+
+# load bardet data set
+data(bardet)
+
+group1 <- rep(1:20, each = 5)
+
+fit_ls <- gglasso(x = bardet$x, y = bardet$y, group = group1, loss = "ls")
+
+plot(fit_ls)
+
+coef(fit_ls)[1:5,90:100]
+```
+
+## Cross-Validation
+
+```{r}
+cvfit_ls <- cv.gglasso(x = bardet$x, y = bardet$y, group = group1, pred.loss = "L1")
+cvfit_ls2 <- cv.gglasso(x = bardet$x, y = bardet$y, group = group1, pred.loss = "L2")
+
+plot(cvfit_ls)
+coef(cvfit_ls, s = "lambda.min")
+coef(cvfit_ls, s = "lambda.1se")
+
+coef(cvfit_ls, s = "lambda.1se") == coef(cvfit_ls2, s = "lambda.1se")
+```
+
+## Group it good
+
+```{r}
+cbind(bardet$x, as.factor(group1))
+fit_ls2 <- gglasso(x =cbind(bardet$x, as.factor(group1)), y = bardet$y, loss = "loss")
+fit_ls3 <- gglasso(x =cbind(bardet$x, as.factor(group1)), y = bardet$y, loss = "L1")
+plot(fit_ls2)
+
+coef(fit_ls)[,100]
+
+```
+
+
+
+## Weight Least squares regression
+
+We can also perform weighted least-squares regression by specifying `loss='wls'`, and providing a $n \times n$ weight matrix in the `weights` argument, where $n$ is the number of observations. Note that cross-validation is **NOT IMPLEMENTED** for `loss='wls'`.
+
+```{r}
+# generate weight matrix
+times <- seq_along(bardet$y)
+rho <- 0.5
+sigma <- 1
+H <- abs(outer(times, times, "-"))
+V <- sigma * rho^H
+p <- nrow(V)
+V[cbind(1:p, 1:p)] <- V[cbind(1:p, 1:p)] * sigma
+
+# reduce eps to speed up convergence for vignette build
+fit_wls <- gglasso(x = bardet$x, y = bardet$y, group = group1, loss = "wls", 
+                   weight = V, eps = 1e-4)
+
+plot(fit_wls)
+
+coef(fit_wls)[1:5,90:100]
+```
+
+

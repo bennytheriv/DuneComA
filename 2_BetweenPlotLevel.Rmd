@@ -1,0 +1,952 @@
+---
+title: "2_BetweenPlotsLevel"
+author: "Ben J. Rivera"
+date: "2023-07-12"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(vegan)
+library(interactions)
+#devtools::install_github("vmikk/metagMisc")
+library("metagMisc") # for dist2list command
+library(circular) # to calculate dist for aspect
+library(marginaleffects)
+library(ggstance)
+library(lattice)
+library(ggpubr)
+library(cowplot)
+
+
+load(file = ".RData") #this allows me to use the global data. So I can make dataframes elsewhere and then use them here.
+CircleConverter <- data.frame(Aspect = c("N", "NW","W","SW", "S", "SE","E","NE"), 
+                     Angle = c(0,45,90,135,180,225,270,315)) #critical for conversion of aspect
+
+
+```
+
+
+
+# Ten Mile
+
+## Cover
+
+```{r}
+TeMi2_Cover <- data.frame()
+
+for (i in 1:length(TeMi_Names)) { #for-loop to combine focal and concentric quadrats 
+  Temp_Cover<-TeMi_Cover %>% select(starts_with(paste0("TeMi.", TeMi_Names[i])))
+  Temp_Concentric<-rowSums(Temp_Cover[2:5]/4) #CHECK THIS
+  Temp_Cover2<- (Temp_Cover[1]*.25)+(Temp_Concentric*.75) #CHECK THIS
+  if(i ==1) {
+    TeMi2_Cover<- Temp_Cover2
+  } else {
+    TeMi2_Cover<-cbind(TeMi2_Cover, Temp_Cover2)
+  }
+}
+
+mean(colSums(TeMi_Cover, na.rm = TRUE))
+mean(colSums(TeMi2_Cover, na.rm = TRUE)) #I think these numbers lining up means it worked right
+```
+
+
+```{r}
+
+#TeMi2_Cover <- TeMi2_Cover[,colSums(is.na(TeMi2_Cover))<nrow(TeMi2_Cover)]
+TeMi2_Cover[is.na(TeMi2_Cover)] <- 0
+
+colSums(TeMi2_Cover) > 100
+
+bareground<- vector(mode="double", length=ncol(TeMi2_Cover))
+names(bareground) <- "bareground"
+
+for(l in 1:length(TeMi2_Cover)) {
+  bareground[l] <- 100-sum(TeMi2_Cover[l])
+}
+TeMi2_Cover <- rbind(TeMi2_Cover, bareground)
+
+rownames(TeMi2_Cover)[dim(TeMi2_Cover)[1]] <- "bareground"
+```
+
+
+```{r}
+
+TeMi2_Dis<-vegdist(t(TeMi2_Cover), na.rm = TRUE, method = "bray") #Calculate Dissim between plots
+
+TeMi2_CoverNMDS<-metaMDS(comm =t(TeMi2_Cover), distance = "bray"  ) #just doing a gross NMDS for visualization
+ordiplot(TeMi2_CoverNMDS, type = "text")
+
+TeMi2<- dist2list(TeMi2_Dis, tri = TRUE)
+densityplot(TeMi2$value) 
+densityplot(sqrt(TeMi2$value)) 
+
+```
+I'm not sure if adding in bareground was smart or not
+
+## Environmental
+
+```{r}
+TeMi2_Env<-TeMi_Diss[c(1,7:9 , 14:16)]
+TeMi2_Env<- data.frame(TeMi2_Env[,-1], row.names=TeMi2_Env[,1])
+
+TeMi2_Env_dissim <- vegdist(TeMi2_Env, method = "gower")
+TeMi2_Env_dissim_long<- dist2list(TeMi2_Env_dissim, tri = TRUE)
+TeMi2_EnvNMDS<-metaMDS(comm = TeMi2_Env, distance = "gower")
+plot(TeMi2_EnvNMDS)
+densityplot(TeMi2_Env_dissim_long$value)
+densityplot(TeMi2_Env_dissim_long$value*.8)
+
+
+```
+
+## Aspect
+
+Aspect has been such a fun puzzle to solve. Ultimately, I have decided on the two dissimilarity matrices route.
+
+```{r}
+
+TeMi_Aspect<- data.frame(TeMi_Diss$Aspect, row.names = TeMi_Diss[,1])
+
+
+for(a in 1:nrow(CircleConverter)){
+  TeMi_Aspect$TeMi_Diss.Aspect[which(TeMi_Aspect == CircleConverter$Aspect[a])] <- CircleConverter$Angle[a]
+
+  
+}
+
+TeMi_Aspect$TeMi_Diss.Aspect <- as.numeric(TeMi_Aspect$TeMi_Diss.Aspect)
+TeMi_Circle<- circular(TeMi_Aspect, units = "degrees", modulo = "2pi", rotation = "clock", template = "geographics")
+plot.circular(TeMi_Circle, stack = TRUE)
+TeMi_CircleDiss<-dist.circular(TeMi_Circle, method = "geodesic")/pi #well this actually make the most sense
+TeMi_CircleDissLong<- dist2list(TeMi_CircleDiss, tri = TRUE)
+densityplot(TeMi_CircleDissLong$value)
+summary(TeMi_CircleDissLong$value)
+```
+
+## Env Combined
+
+```{r}
+which(TeMi2_Env_dissim_long$col != TeMi_CircleDissLong$col)
+which(TeMi2_Env_dissim_long$row != TeMi_CircleDissLong$row)
+
+TeMi2$EnvDis<-(TeMi2_Env_dissim_long$value * 0.8) + (TeMi_CircleDissLong$value * 0.2)
+which(TeMi2_Env_dissim_long$value == TeMi2$EnvDis)
+
+densityplot(TeMi2$EnvDis)
+summary(TeMi2$EnvDis)
+summary(TeMi2$value)
+
+
+ggplot(aes(x = EnvDis, y = value), data = TeMi2)+
+  geom_point()+
+  geom_smooth(method = "lm")
+
+ggplot(aes(x = EnvDis, y = sqrt(value)), data = TeMi2)+
+  geom_point()+
+  geom_smooth(method = "lm")
+
+summary(lm(value ~ EnvDis, data = TeMi2))
+summary(lm(sqrt(value) ~ EnvDis, data = TeMi2))
+```
+
+## Actual Distances
+
+```{r}
+
+
+TeMi_difvalues<-setdiff(TeMi_RelCords$Plot, as.character(TeMi_Diss$Plot))
+
+
+
+`%not_in%` <- purrr::negate(`%in%`)
+TeMi2_RelCord<-TeMi_RelCords[TeMi_RelCords$Plot %not_in% TeMi_difvalues,]
+
+
+TeMi2_RelCord <- data.frame(TeMi2_RelCord[,-1], row.names=TeMi2_RelCord[,1])
+TeMi2_RelCord
+TeMi2_X<-designdist(TeMi2_RelCord[1], method = "A-B", terms = "minimum")
+
+TeMi2_Y<-designdist(TeMi2_RelCord[2], method = "A-B", terms = "minimum")
+TeMi2_Z<-designdist(TeMi2_RelCord[3], method = "A-B", terms = "minimum")
+
+
+TeMi2_Dist<-data.frame(dist2list(TeMi2_X, tri = TRUE)[1:2],Xdist = dist2list(TeMi2_X, tri = TRUE)$value, Ydist = dist2list(TeMi2_Y, tri = TRUE)$value, Zdist = dist2list(TeMi2_Z, tri = TRUE)$value)
+
+TeMi2_Dist$TotalDist<-sqrt(TeMi2_Dist$Xdist^2 + TeMi2_Dist$Ydis^2 + TeMi2_Dist$Zdist^2)
+
+
+densityplot(TeMi2_Dist$Xdist)
+densityplot(TeMi2_Dist$Ydist)
+densityplot(TeMi2_Dist$Zdist)
+densityplot(TeMi2_Dist$TotalDist)
+
+TeMi2<-data.frame(TeMi2_Dist[1:2], Dissim = TeMi2$value, TeMi2[4], TeMi2_Dist[3:6])
+
+
+```
+
+## Plots and models
+
+```{r}
+
+TeMi_EnvDis.mod <-lm(Dissim ~ EnvDis, data = TeMi2)
+summary(TeMi_EnvDis.mod) # .
+
+ggplot(aes(y = Dissim, x = EnvDis ), data = TeMi2)+
+  geom_point()+
+  geom_smooth(method = "lm")+
+  labs(title = "Ten-Mile: Environmental Similarity between Points")
+
+
+summary(lm(Dissim ~ abs(Xdist), data = TeMi2))
+
+ggplot(aes(y = Dissim, x = abs(Xdist) ), data = TeMi2)+
+  geom_point()
+
+
+summary(lm(Dissim ~ abs(Ydist), data = TeMi2))
+
+ggplot(aes(y = Dissim, x = abs(Ydist) ), data = TeMi2)+
+  geom_point()
+
+summary(lm(Dissim ~ sqrt(abs(Zdist)), data = TeMi2)) # **
+
+ggplot(aes(y = Dissim, x = sqrt(abs(Zdist)) ), data = TeMi2)+
+  geom_point()+
+  geom_smooth(method = "lm")
+
+
+TeMi_TotalDist.mod<- lm(Dissim ~ TotalDist, data = TeMi2)
+summary(TeMi_TotalDist.mod) # .
+
+ggplot(aes(y = Dissim, x = TotalDist ), data = TeMi2)+
+  geom_point()+
+  geom_smooth(method = "lm")+
+  labs(title = "Ten-Mile: Distance between Points")
+
+
+anova(TeMi_EnvDis.mod, TeMi_TotalDist.mod, test = "Chisq")
+
+summary(lm(Dissim ~ EnvDis+TotalDist, data = TeMi2)) # **
+summary(lm(Dissim ~ EnvDis*TotalDist, data = TeMi2)) # .
+
+```
+
+
+
+## Marginal Effects
+
+```{r}
+TeMi_Combined.mod <- lm(Dissim ~ TotalDist+EnvDis, data = TeMi2)
+summary(TeMi_Combined.mod)
+TeMi.pre<-predictions(TeMi_Combined.mod)
+ggplot(aes(x = EnvDis, y = estimate), data = TeMi.pre)+
+  geom_point()
+
+
+TeMi.cmp<- avg_comparisons(TeMi_Combined.mod,  variables =  list(TotalDist = "minmax", EnvDis = "minmax"), conf_level = 0.90, type = "response")
+
+TeMi.cmp
+
+ggplot(TeMi.cmp, aes(x = estimate,
+                 xmin = conf.low,
+                 xmax = conf.high, 
+                 y = term)) +
+     annotate("rect", xmin = -0.1, xmax = 0.1, ymin = -Inf, ymax = Inf, alpha = .2)+
+  geom_vline(xintercept = c(-0.1, .1), linetype = "dashed") + 
+  geom_vline(xintercept = 0, linetype = "solid", size = 1.5)+
+  geom_errorbarh() + 
+  geom_point(size = 2) +
+  theme_classic()+
+  labs(title = "Ten Mile")
+
+plot_comparisons(TeMi_Combined.mod,
+                 variables = "EnvDis",
+                 condition = "TotalDist",
+                 comparison = "ratio") 
+```
+
+
+
+
+
+# Zmudowski
+
+
+
+## Cover
+
+```{r}
+Zmud2_Cover <- data.frame()
+
+for (i in 1:length(Zmud_Names)) { #for-loop to combine focal and concentric quadrats 
+  Temp_Cover<-Zmud_Cover %>% select(starts_with(paste0("Zmud.", Zmud_Names[i])))
+  Temp_Concentric<-rowSums(Temp_Cover[2:5]/4) #CHECK THIS
+  Temp_Cover2<- (Temp_Cover[1]*.25)+(Temp_Concentric*.75) #CHECK THIS
+  if(i ==1) {
+    Zmud2_Cover<- Temp_Cover2
+  } else {
+    Zmud2_Cover<-cbind(Zmud2_Cover, Temp_Cover2)
+  }
+}
+
+mean(colSums(Zmud_Cover, na.rm = TRUE))
+mean(colSums(Zmud2_Cover, na.rm = TRUE)) #I think these numbers lining up means it worked right
+```
+
+
+```{r}
+
+#Zmud2_Cover <- Zmud2_Cover[,colSums(is.na(Zmud2_Cover))<nrow(Zmud2_Cover)]
+Zmud2_Cover[is.na(Zmud2_Cover)] <- 0
+
+colSums(Zmud2_Cover) > 100
+
+bareground<- vector(mode="double", length=ncol(Zmud2_Cover))
+names(bareground) <- "bareground"
+
+for(l in 1:length(Zmud2_Cover)) {
+  bareground[l] <- 100-sum(Zmud2_Cover[l])
+}
+Zmud2_Cover <- rbind(Zmud2_Cover, bareground)
+
+rownames(Zmud2_Cover)[dim(Zmud2_Cover)[1]] <- "bareground"
+```
+
+
+```{r}
+
+Zmud2_Dis<-vegdist(t(Zmud2_Cover), na.rm = TRUE, method = "bray") #Calculate Dissim between plots
+
+Zmud2_CoverNMDS<-metaMDS(comm =t(Zmud2_Cover), distance = "bray"  ) #just doing a gross NMDS for visualization
+ordiplot(Zmud2_CoverNMDS, type = "text")
+
+Zmud2<- dist2list(Zmud2_Dis, tri = TRUE)
+densityplot(Zmud2$value) 
+densityplot(sqrt(Zmud2$value)) 
+
+```
+I'm not sure if adding in bareground was smart or not
+
+## Environmental
+
+```{r}
+Zmud2_Env<-Zmud_Diss[c(1,7:9 )]
+Zmud2_Env<- data.frame(Zmud2_Env[,-1], row.names=Zmud2_Env[,1])
+
+Zmud2_Env_dissim <- vegdist(Zmud2_Env, method = "gower")
+Zmud2_Env_dissim_long<- dist2list(Zmud2_Env_dissim, tri = TRUE)
+Zmud2_EnvNMDS<-metaMDS(comm = Zmud2_Env, distance = "gower")
+plot(Zmud2_EnvNMDS)
+densityplot(Zmud2_Env_dissim_long$value)
+densityplot(Zmud2_Env_dissim_long$value*.8)
+
+
+```
+
+## Aspect
+
+Aspect has been such a fun puzzle to solve. Ultimately, I have decided on the two dissimilarity matrices route.
+
+```{r}
+
+Zmud_Aspect<- data.frame(Zmud_Diss$Aspect, row.names = Zmud_Diss[,1])
+
+
+for(a in 1:nrow(CircleConverter)){
+  Zmud_Aspect$Zmud_Diss.Aspect[which(Zmud_Aspect == CircleConverter$Aspect[a])] <- CircleConverter$Angle[a]
+
+  
+}
+
+Zmud_Aspect$Zmud_Diss.Aspect <- as.numeric(Zmud_Aspect$Zmud_Diss.Aspect)
+Zmud_Circle<- circular(Zmud_Aspect, units = "degrees", modulo = "2pi")
+plot.circular(Zmud_Circle, stack = TRUE)
+Zmud_CircleDiss<-dist.circular(Zmud_Circle, method = "geodesic")/pi #well this actually make the most sense
+Zmud_CircleDissLong<- dist2list(Zmud_CircleDiss, tri = TRUE)
+densityplot(Zmud_CircleDissLong$value)
+summary(Zmud_CircleDissLong$value)
+```
+
+## Env Combined
+
+```{r}
+which(Zmud2_Env_dissim_long$col != Zmud_CircleDissLong$col)
+which(Zmud2_Env_dissim_long$row != Zmud_CircleDissLong$row)
+
+Zmud2$EnvDis<-(Zmud2_Env_dissim_long$value * 0.8) + (Zmud_CircleDissLong$value * 0.2)
+which(Zmud2_Env_dissim_long$value == Zmud2$EnvDis)
+
+densityplot(Zmud2$EnvDis)
+summary(Zmud2$EnvDis)
+summary(Zmud2$value)
+
+
+ggplot(aes(x = EnvDis, y = value), data = Zmud2)+
+  geom_point()+
+  geom_smooth(method = "lm")
+
+ggplot(aes(x = EnvDis, y = sqrt(value)), data = Zmud2)+
+  geom_point()+
+  geom_smooth(method = "lm")
+
+summary(lm(value ~ EnvDis, data = Zmud2))
+summary(lm(sqrt(value) ~ EnvDis, data = Zmud2))
+```
+
+## Actual Distances
+
+```{r}
+
+
+Zmud_difvalues<-setdiff(Zmud_RelCords$Plot, as.character(Zmud_Diss$Plot))
+
+
+
+`%not_in%` <- purrr::negate(`%in%`)
+Zmud2_RelCord<-Zmud_RelCords[Zmud_RelCords$Plot %not_in% Zmud_difvalues,]
+
+
+Zmud2_RelCord <- data.frame(Zmud2_RelCord[,-1], row.names=Zmud2_RelCord[,1])
+Zmud2_RelCord
+Zmud2_X<-designdist(Zmud2_RelCord[1], method = "A-B", terms = "minimum")
+
+Zmud2_Y<-designdist(Zmud2_RelCord[2], method = "A-B", terms = "minimum")
+Zmud2_Z<-designdist(Zmud2_RelCord[3], method = "A-B", terms = "minimum")
+
+
+Zmud2_Dist<-data.frame(dist2list(Zmud2_X, tri = TRUE)[1:2],Xdist = dist2list(Zmud2_X, tri = TRUE)$value, Ydist = dist2list(Zmud2_Y, tri = TRUE)$value, Zdist = dist2list(Zmud2_Z, tri = TRUE)$value)
+
+Zmud2_Dist$TotalDist<-sqrt(Zmud2_Dist$Xdist^2 + Zmud2_Dist$Ydis^2 + Zmud2_Dist$Zdist^2)
+
+
+densityplot(Zmud2_Dist$Xdist)
+densityplot(Zmud2_Dist$Ydist)
+densityplot(Zmud2_Dist$Zdist)
+densityplot(Zmud2_Dist$TotalDist)
+
+Zmud2<-data.frame(Zmud2_Dist[1:2], Dissim = Zmud2$value, Zmud2[4], Zmud2_Dist[3:6])
+
+
+```
+
+## Plots and models
+
+```{r}
+
+Zmud_EnvDis.mod <-lm(Dissim ~ EnvDis, data = Zmud2)
+summary(Zmud_EnvDis.mod) # ***
+
+ggplot(aes(y = Dissim, x = EnvDis ), data = Zmud2)+
+  geom_point()+
+  geom_smooth(method = "lm")+
+  labs(title = "Ten-Mile: Environmental Similarity between Points")
+
+
+summary(lm(Dissim ~ abs(Xdist), data = Zmud2)) #***
+
+ggplot(aes(y = Dissim, x = abs(Xdist) ), data = Zmud2)+
+  geom_point()+
+  geom_smooth(method = "lm")
+
+
+summary(lm(Dissim ~ abs(Ydist), data = Zmud2)) #**
+
+ggplot(aes(y = Dissim, x = abs(Ydist) ), data = Zmud2)+
+  geom_point()+
+  geom_smooth(method = "lm")
+
+summary(lm(Dissim ~ (abs(Zdist)), data = Zmud2))
+
+ggplot(aes(y = Dissim, x = sqrt(abs(Zdist)) ), data = Zmud2)+
+  geom_point()
+
+
+Zmud_TotalDist.mod<- lm(Dissim ~ TotalDist, data = Zmud2)
+summary(Zmud_TotalDist.mod) # **
+
+ggplot(aes(y = Dissim, x = TotalDist ), data = Zmud2)+
+  geom_point()+
+  geom_smooth(method = "lm")+
+  labs(title = "Ten-Mile: Distance between Points")
+
+
+anova(Zmud_EnvDis.mod, Zmud_TotalDist.mod, test = "Chisq")
+
+summary(lm(Dissim ~ EnvDis+TotalDist, data = Zmud2)) # **
+summary(lm(Dissim ~ EnvDis*TotalDist, data = Zmud2)) # .
+
+```
+
+
+
+## Marginal Effects
+
+```{r}
+Zmud_Combined.mod <- lm(Dissim ~ TotalDist+EnvDis, data = Zmud2)
+summary(Zmud_Combined.mod)
+Zmud.pre<-predictions(Zmud_Combined.mod)
+ggplot(aes(x = EnvDis, y = estimate), data = pre)+
+  geom_point()
+
+
+Zmud.cmp<- avg_comparisons(Zmud_Combined.mod,  variables =  list(TotalDist = "minmax", EnvDis = "minmax"), conf_level = 0.90, type = "response")
+
+Zmud.cmp
+
+ggplot(Zmud.cmp, aes(x = estimate,
+                 xmin = conf.low,
+                 xmax = conf.high, 
+                 y = term)) +
+     annotate("rect", xmin = -0.1, xmax = 0.1, ymin = -Inf, ymax = Inf, alpha = .2)+
+  geom_vline(xintercept = c(-0.1, .1), linetype = "dashed") + 
+  geom_vline(xintercept = 0, linetype = "solid", size = 1.5)+
+  geom_errorbarh() + 
+  geom_point(size = 2) +
+  theme_classic()+
+  labs(title = "Zmudowski")
+
+plot_comparisons(Zmud_Combined.mod,
+                 variables = "EnvDis",
+                 condition = "TotalDist",
+                 comparison = "ratio") 
+```
+
+
+# Guadalupe-Nipomo
+
+
+## Cover
+
+```{r}
+GuNi2_Cover <- data.frame()
+
+for (i in 1:length(GuNi_Names)) { #for-loop to combine focal and concentric quadrats 
+  Temp_Cover<-GuNi_Cover %>% select(starts_with(paste0("GuNi.", GuNi_Names[i])))
+  Temp_Concentric<-rowSums(Temp_Cover[2:5]/4) #CHECK THIS
+  Temp_Cover2<- (Temp_Cover[1]*.25)+(Temp_Concentric*.75) #CHECK THIS
+  if(i ==1) {
+    GuNi2_Cover<- Temp_Cover2
+  } else {
+    GuNi2_Cover<-cbind(GuNi2_Cover, Temp_Cover2)
+  }
+}
+
+mean(colSums(GuNi_Cover, na.rm = TRUE))
+mean(colSums(GuNi2_Cover, na.rm = TRUE)) #I think these numbers lining up means it worked right
+```
+
+
+```{r}
+
+#GuNi2_Cover <- GuNi2_Cover[,colSums(is.na(GuNi2_Cover))<nrow(GuNi2_Cover)]
+GuNi2_Cover[is.na(GuNi2_Cover)] <- 0
+
+colSums(GuNi2_Cover) > 100
+
+bareground<- vector(mode="double", length=ncol(GuNi2_Cover))
+names(bareground) <- "bareground"
+
+for(l in 1:length(GuNi2_Cover)) {
+  bareground[l] <- 100-sum(GuNi2_Cover[l])
+}
+GuNi2_Cover <- rbind(GuNi2_Cover, bareground)
+
+rownames(GuNi2_Cover)[dim(GuNi2_Cover)[1]] <- "bareground"
+```
+
+
+```{r}
+
+GuNi2_Dis<-vegdist(t(GuNi2_Cover), na.rm = TRUE, method = "bray") #Calculate Dissim between plots
+
+GuNi2_CoverNMDS<-metaMDS(comm =t(GuNi2_Cover), distance = "bray"  ) #just doing a gross NMDS for visualization
+ordiplot(GuNi2_CoverNMDS, type = "text")
+
+GuNi2<- dist2list(GuNi2_Dis, tri = TRUE)
+densityplot(GuNi2$value) 
+densityplot(sqrt(GuNi2$value)) 
+
+```
+I'm not sure if adding in bareground was smart or not
+
+## Environmental
+
+```{r}
+GuNi2_Env<-GuNi_Diss[c(1,7:9 , 14:16)]
+GuNi2_Env<- data.frame(GuNi2_Env[,-1], row.names=GuNi2_Env[,1])
+
+GuNi2_Env_dissim <- vegdist(GuNi2_Env, method = "gower", na.rm = TRUE)
+GuNi2_Env_dissim_long<- dist2list(GuNi2_Env_dissim, tri = TRUE)
+GuNi2_EnvNMDS<-metaMDS(comm = GuNi2_Env, distance = "gower", na.rm = TRUE)
+plot(GuNi2_EnvNMDS)
+densityplot(GuNi2_Env_dissim_long$value)
+densityplot(GuNi2_Env_dissim_long$value*.8)
+
+
+```
+
+## Aspect
+
+Aspect has been such a fun puzzle to solve. Ultimately, I have decided on the two dissimilarity matrices route.
+
+```{r}
+
+GuNi_Aspect<- data.frame(GuNi_Diss$Aspect, row.names = GuNi_Diss[,1])
+
+
+for(a in 1:nrow(CircleConverter)){
+  GuNi_Aspect$GuNi_Diss.Aspect[which(GuNi_Aspect == CircleConverter$Aspect[a])] <- CircleConverter$Angle[a]
+
+  
+}
+
+GuNi_Aspect$GuNi_Diss.Aspect <- as.numeric(GuNi_Aspect$GuNi_Diss.Aspect)
+GuNi_Circle<- circular(GuNi_Aspect, units = "degrees", modulo = "2pi")
+plot.circular(GuNi_Circle, stack = TRUE)
+GuNi_CircleDiss<-dist.circular(GuNi_Circle, method = "geodesic")/pi #well this actually make the most sense
+GuNi_CircleDissLong<- dist2list(GuNi_CircleDiss, tri = TRUE)
+densityplot(GuNi_CircleDissLong$value)
+summary(GuNi_CircleDissLong$value)
+```
+
+## Env Combined
+
+```{r}
+which(GuNi2_Env_dissim_long$col != GuNi_CircleDissLong$col)
+which(GuNi2_Env_dissim_long$row != GuNi_CircleDissLong$row)
+
+GuNi2$EnvDis<-(GuNi2_Env_dissim_long$value * 0.8) + (GuNi_CircleDissLong$value * 0.2)
+which(GuNi2_Env_dissim_long$value == GuNi2$EnvDis)
+
+densityplot(GuNi2$EnvDis)
+summary(GuNi2$EnvDis)
+summary(GuNi2$value)
+
+
+ggplot(aes(x = EnvDis, y = value), data = GuNi2)+
+  geom_point()+
+  geom_smooth(method = "lm")
+
+ggplot(aes(x = EnvDis, y = sqrt(value)), data = GuNi2)+
+  geom_point()+
+  geom_smooth(method = "lm")
+
+summary(lm(value ~ EnvDis, data = GuNi2))
+summary(lm(sqrt(value) ~ EnvDis, data = GuNi2))
+```
+
+## Actual Distances
+
+```{r}
+
+
+GuNi_difvalues<-setdiff(GuNi_RelCords$Plot, as.character(GuNi_Diss$Plot))
+
+
+
+`%not_in%` <- purrr::negate(`%in%`)
+GuNi2_RelCord<-GuNi_RelCords[GuNi_RelCords$Plot %not_in% GuNi_difvalues,]
+
+
+GuNi2_RelCord <- data.frame(GuNi2_RelCord[,-1], row.names=GuNi2_RelCord[,1])
+GuNi2_RelCord
+GuNi2_X<-designdist(GuNi2_RelCord[1], method = "A-B", terms = "minimum")
+
+GuNi2_Y<-designdist(GuNi2_RelCord[2], method = "A-B", terms = "minimum")
+GuNi2_Z<-designdist(GuNi2_RelCord[3], method = "A-B", terms = "minimum")
+
+
+GuNi2_Dist<-data.frame(dist2list(GuNi2_X, tri = TRUE)[1:2],Xdist = dist2list(GuNi2_X, tri = TRUE)$value, Ydist = dist2list(GuNi2_Y, tri = TRUE)$value, Zdist = dist2list(GuNi2_Z, tri = TRUE)$value)
+
+GuNi2_Dist$TotalDist<-sqrt(GuNi2_Dist$Xdist^2 + GuNi2_Dist$Ydis^2 + GuNi2_Dist$Zdist^2)
+
+
+densityplot(GuNi2_Dist$Xdist)
+densityplot(GuNi2_Dist$Ydist)
+densityplot(GuNi2_Dist$Zdist)
+densityplot(GuNi2_Dist$TotalDist)
+
+GuNi2<-data.frame(GuNi2_Dist[1:2], Dissim = GuNi2$value, GuNi2[4], GuNi2_Dist[3:6])
+
+
+```
+
+## Plots and models
+
+```{r}
+
+GuNi_EnvDis.mod <-lm(Dissim ~ EnvDis, data = GuNi2)
+summary(GuNi_EnvDis.mod) # ***
+
+ggplot(aes(y = Dissim, x = EnvDis ), data = GuNi2)+
+  geom_point()+
+  geom_smooth(method = "lm")+
+  labs(title = "Ten-Mile: Environmental Similarity between Points")
+
+
+summary(lm(Dissim ~ abs(Xdist), data = GuNi2))
+
+ggplot(aes(y = Dissim, x = abs(Xdist) ), data = GuNi2)+
+  geom_point()+
+  geom_smooth(method = "lm")
+
+
+summary(lm(Dissim ~ abs(Ydist), data = GuNi2))
+
+ggplot(aes(y = Dissim, x = abs(Ydist) ), data = GuNi2)+
+  geom_point()
+
+summary(lm(Dissim ~ (abs(Zdist)), data = GuNi2)) # **
+
+ggplot(aes(y = Dissim, x = (abs(Zdist)) ), data = GuNi2)+
+  geom_point()
+
+
+GuNi_TotalDist.mod<- lm(Dissim ~ TotalDist, data = GuNi2)
+summary(GuNi_TotalDist.mod) # 
+
+ggplot(aes(y = Dissim, x = TotalDist ), data = GuNi2)+
+  geom_point()+
+  labs(title = "Ten-Mile: Distance between Points")
+
+
+anova(GuNi_EnvDis.mod, GuNi_TotalDist.mod, test = "Chisq")
+
+summary(lm(Dissim ~ EnvDis+TotalDist, data = GuNi2)) # **
+summary(lm(Dissim ~ EnvDis*TotalDist, data = GuNi2)) # .
+
+```
+
+
+
+## Marginal Effects
+
+```{r}
+GuNi_Combined.mod <- lm(Dissim ~ TotalDist+EnvDis, data = GuNi2)
+summary(GuNi_Combined.mod)
+GuNi.pre<-predictions(GuNi_Combined.mod)
+ggplot(aes(x = EnvDis, y = estimate), data = GuNi.pre)+
+  geom_point()
+
+
+GuNi.cmp<- avg_comparisons(GuNi_Combined.mod,  variables =  list(TotalDist = "minmax", EnvDis = "minmax"), conf_level = 0.90, type = "response")
+
+GuNi.cmp
+
+ggplot(GuNi.cmp, aes(x = estimate,
+                 xmin = conf.low,
+                 xmax = conf.high, 
+                 y = term)) +
+     annotate("rect", xmin = -0.1, xmax = 0.1, ymin = -Inf, ymax = Inf, alpha = .2)+
+  geom_vline(xintercept = c(-0.1, .1), linetype = "dashed") + 
+  geom_vline(xintercept = 0, linetype = "solid", size = 1.5)+
+  geom_errorbarh() + 
+  geom_point(size = 2) +
+  theme_classic()+
+  labs(title = "Guadalupe-Nipomo")
+
+ggplot(aes(x = EnvDis, y = Dissim), data = GuNi2)+
+  geom_point()+
+  geom_smooth(method = "lm")
+
+```
+
+
+# **Combined**
+
+### Data management
+
+```{r}
+
+TeMi2$Site<- rep("TeMi", dim(TeMi2)[1])
+Zmud2$Site<- rep("Zmud", dim(Zmud2)[1])
+GuNi2$Site<- rep("GuNi", dim(GuNi2)[1])
+
+Combo2<-rbind(TeMi2, Zmud2, GuNi2)
+Combo2$Site <- factor(Combo2$Site, levels=c('TeMi', 'Zmud', 'GuNi'))
+
+densityplot(~ Dissim, data = Combo2)
+densityplot(~ Dissim, group = Site, data = Combo2)
+summary(lm(Dissim ~ Site, data = Combo2)) # yeah it is sig, but that is likely just a product of the large sample size rather than a meaningful difference
+ggplot(aes(x = Site, y = Dissim, color = Site), data = Combo2)+
+  geom_jitter(width = 0.1, height = 0)+
+  geom_violin(aes(fill = Site), alpha = 0.5)+
+  stat_summary_bin(fun = "mean", geom = "point", orientation = 'x', size = 5, color = "black")
+
+
+ggplot(aes(x = EnvDis, y = Dissim), data = Combo2)+
+  geom_point(aes(color = Site))+
+  geom_smooth(method = "lm", color = "black")+
+  geom_smooth(aes(color = Site),method = "lm")
+
+
+
+```
+
+### Negligible effects
+```{r}
+Mixed2<- lmer(Dissim ~ EnvDis+TotalDist + (1|Site), data = Combo2)
+summary(Mixed2)
+car::Anova(Mixed2)
+
+Mixed2.Inter<- lmer(Dissim ~ EnvDis*TotalDist + (1|Site), data = Combo2)
+
+Mixed2.null<- lmer(Dissim ~ 1 + (1|Site), data = Combo2)
+anova(Mixed2, Mixed2.null)
+anova(Mixed2, Mixed2.Inter)
+Mixed2.cmp<- avg_comparisons(Mixed2, variables = list(EnvDis = "minmax", TotalDist = "minmax"),   conf_level = 0.90, type = "response")
+
+
+as.data.frame(Mixed2.cmp)
+
+Bet.Negl<- ggplot(Mixed2.cmp, aes(x = estimate,
+                 xmin = conf.low,
+                 xmax = conf.high, 
+                 y = term,
+                 group = contrast)) +
+     annotate("rect", xmin = -0.1, xmax = 0.1, ymin = -Inf, ymax = Inf, alpha = .2)+
+  geom_vline(xintercept = c(-0.1, .1), linetype = "dashed") + 
+  geom_vline(xintercept = 0, linetype = "solid", linewidth = 1.5)+
+  geom_errorbarh(aes(xmin = conf.low,  xmax = conf.high,),position = position_dodgev(height = 1.5)) + 
+  geom_point(size = 4, position = position_dodgev(height = 1.5)) +
+  theme_classic()+
+  labs(x = "Estimated Change in Community Dissimilarity", y = "Term")+
+  theme(text = element_text(family = "serif", size = 18), axis.text.y = element_text( size=12, angle=45))+ 
+  scale_y_discrete(labels=c("TotalDist" = "Distance Between Plots", 
+                            "EnvDis" = "Environmental Dissimilarity"))
+
+Bet.Negl
+ggsave("Between-Marginal.png", dpi = 600, height = 7, width = 10)
+
+
+```
+
+```{r}
+plot_predictions(Mixed2, condition = "EnvDis")+
+  geom_point(data = Combo2,alpha = 0.5, shape = 1, aes(x = EnvDis, y = Dissim, color = Site))+
+  labs(x = "Environmental Dissimilarity", y =  "Community Dissimilarity")+
+  scale_color_manual(labels = c("Guadalupe-Nipomo", "Ten Mile", "Zmudowski"), values = c("#d55e00", "#cc79a7", "#009e73"))+
+  theme(text = element_text(family = "serif", size = 18))
+
+
+
+library(ggside)
+pp_between_EnvDis<-plot_predictions(Mixed2, condition = "EnvDis", draw = FALSE)
+
+
+Combo3 <- Combo2 #this is dangerous and bad
+Combo3$estimate <- Combo3$Dissim
+
+
+Bet.EnvDis <- ggplot(aes(x = EnvDis, y = estimate), data = pp_between_EnvDis)+
+  geom_point(data = Combo2,alpha = 0.25, aes(x = EnvDis, y = Dissim, shape = Site))+
+  geom_ribbon(aes(ymin = conf.low, ymax = conf.high), alpha = 0.5, color = "transparent", fill = "grey")+
+  geom_line(size = .5)+
+  labs(x = "Environmental Dissimilarity", y =  "Community Dissimilarity")+
+  scale_color_manual(labels = c("Ten Mile", "Zmudowski", "Guadalupe-Nipomo"), values = c("#d55e00", "#cc79a7", "#009e73"), name = "Site")+
+  scale_shape_manual(labels = c("Ten Mile", "Zmudowski", "Guadalupe-Nipomo"), values = c(1,2,0), name = "Site")+
+  theme_classic()+
+  theme(text = element_text(family = "serif", size = 18),legend.position='bottom', legend.background = element_rect(colour = 'black', fill = 'white', linetype='solid'))+
+    geom_xsidedensity(aes(y= after_stat(density),color = Site, fill = Site),
+    alpha    = 0.25,
+    size     = 1,
+    position = "identity",
+    data = Combo3
+  ) +
+    geom_ysidedensity(aes(x= after_stat(density),color = Site, fill = Site),
+    alpha    = 0.25,
+    size     = 1,
+    position = "identity",
+    data = Combo3
+  ) +
+  scale_fill_manual(labels = c("Ten Mile", "Zmudowski", "Guadalupe-Nipomo"), values = c("#d55e00", "#cc79a7", "#009e73"), name = "Site")+
+  theme_ggside_void()
+
+Bet.EnvDis
+
+
+ggsave("Between-EnvDis.png", dpi = 600, height = 7, width = 10)
+
+
+pp_between_TotalDist<-plot_predictions(Mixed2, condition = "TotalDist", draw = FALSE)
+
+Bet.TotalDist<- ggplot(aes(x = TotalDist, y = estimate), data = pp_between_TotalDist)+
+  geom_point(data = Combo2,alpha = 0.25, aes(x = TotalDist, y = Dissim, shape = Site))+
+  geom_ribbon(aes(ymin = conf.low, ymax = conf.high), alpha = 0.5, color = "transparent", fill = "grey")+
+  geom_line(size = .5)+
+  labs(x = "Distance Between Plots (m)", y =  "Community Dissimilarity")+     
+  scale_fill_manual(labels = c("Ten Mile", "Zmudowski", "Guadalupe-Nipomo"), values = c("#d55e00", "#cc79a7", "#009e73"), name = "Site")+
+  scale_color_manual(labels = c("Ten Mile", "Zmudowski", "Guadalupe-Nipomo"), values = c("#d55e00", "#cc79a7", "#009e73"), name = "Site")+
+  scale_shape_manual(labels = c("Ten Mile", "Zmudowski", "Guadalupe-Nipomo"), values = c(1,2,0), name = "Site")+
+  theme_classic()+
+  theme(text = element_text(family = "serif", size = 18),legend.position='bottom', legend.background = element_rect(colour = 'black', fill = 'white', linetype='solid'))+
+    geom_xsidedensity(aes(y= after_stat(density),color = Site, fill = Site),
+    alpha    = 0.25,
+    size     = 1,
+    position = "identity",
+    data = Combo3
+  ) +
+    geom_ysidedensity(aes(x= after_stat(density),color = Site, fill = Site),
+    alpha    = 0.25,
+    size     = 1,
+    position = "identity",
+    data = Combo3
+  ) +
+  theme_ggside_void()
+
+
+Bet.TotalDist
+
+
+ggsave("Between-EnvDis.png", dpi = 600, height = 7, width = 10)
+
+```
+
+# Figure Construction
+
+```{r}
+
+Bet.TotalDist2<- Bet.TotalDist + theme(legend.position='none')
+ggdraw() +
+  draw_plot(Bet.Negl, x = 0, y = .666, width = 1, height = .333) +
+  draw_plot(Bet.TotalDist2, x = 0, y = 0.3333, width = 1, height = .333) +
+  draw_plot(Bet.EnvDis, x = 0, y = 0, width = 1, height = 0.3333) +
+  draw_plot_label(label = c("A", "B", "C" ),family = "serif", size = 20, color = "black", x = c(0, 0, 0), y = c(.9999, .69, 0.355 ))+
+  draw_image("BetweenPlotLogo.png", x = 0.79, y = 0.83, width = .175, height = 0.175) +
+  theme(plot.background = element_rect(fill = "white", color = "transparent"))
+
+ggsave("BetweenGraph.png", dpi = 600, height = 12, width = 9)
+
+
+```
+
+# Tables
+
+```{r}
+models.plots2<- list( 
+  "Reduced Model" = Mixed2,
+  "Full Model" = Mixed2.Inter,
+  "Null Model" = Mixed2.null
+   )
+
+fun <- function(model) data.frame("corrected" = round(cAIC4::cAIC(model)$caic, 2))
+
+
+modelsummary(models.plots2,
+  fmt = 3,
+  estimate  = "{estimate} [{conf.low}, {conf.high}]",
+  statistic = NULL, 
+  conf_level = .90,
+  gof_function = fun, 
+  gof_omit = 'AIC|BIC|ICC',
+  output = "BetweenPlotsTable.docx")
+
+
+
+
+```
+
