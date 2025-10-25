@@ -1,0 +1,546 @@
+---
+title: "1.2 WithinPlot:LASSO Regression"
+output: html_document
+date: "2025-06-20"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(marginaleffects)
+library(gglasso)
+library(fastDummies)
+library(lme4)
+library(MuMIn)
+library(modelsummary)
+library(cAIC4)
+library(ggpubr)
+library(cowplot)
+library(png)
+library(extrafont)
+
+load(file = "DuneComm2.RData") #this allows me to use the global data. So I can make dataframes elsewhere and then use them here.
+
+```
+
+The Goal of this document is to use LASSO regression to tell me which variable I can remove from my GLMM at the within-plot level of this project. I will be looking to cross-validate it as well. Then I can use that model and do my negligible effects magic as well. Aspect is the tricky one (yet again) but by doing a 'group lasso' with dummy variables, it should work out! 
+
+I may also try to explore Dr. Gilbert's idea of removing species or group of species and the simulating those results. Perhaps some kind of randomization test could also prove useful.
+
+
+# **LASSO**-ing
+
+Okay, let's get the Lasso working. 
+
+
+## *All Plots*
+
+What I figured out is that there are two routes. I only have soil data for two sites but that cuts my sample size from 107 to 63. So there is a trade off between all the plots and all the predictor variables. I decided to pursue both routes to see if it told me anything. Spoiler, I think I'll just report both.
+
+### Data Wrangling
+
+The first thing I have to do is get the data looking nice. I separate out the response variable. Then I select out the predictor variables I have data for every plot on. This has to be a matrix. I've set up Aspect as a dummy variable for each and every level. Any weirdness will be solved by grouping my predictors. That's what the 'AspectGroup' does. It will lump all my aspect dummy variables together and leave everyone else alone. The Lasso then will decide to include all or none of the Aspect Dummy variables.
+
+```{r}
+head(Comb_Dis)
+With_Las <- subset(Comb_Dis, Dissimilarity >0.0) #this just rid of plots that were all sand
+
+Las.y <- With_Las[,2]
+DumAspect<-as.matrix(dummy_cols(With_Las, select_columns = "Aspect")[,18:25])
+Las.x1<- With_Las %>% select(c( "SoilTemp", "SoilMoist","X", "Y", "Z", "Slope")) 
+
+AspectGroup <- c((1:dim(Las.x1)[2]), rep(dim(Las.x1)[2]+1, 8))
+
+Las.x.scaled <- Las.x1
+Las.x.scaled$X <- scale(Las.x.scaled$X)
+Las.x.scaled$Y <- scale(Las.x.scaled$Y)
+Las.x.scaled$Z <- scale(Las.x.scaled$Z)
+Las.x.scaled$Slope <- scale(Las.x.scaled$Slope)
+
+Las.x<- Las.x1%>%
+  cbind(DumAspect) %>%
+  as.matrix()
+
+
+
+
+```
+### Actually run the Lasso
+
+Okay, here I'm faced with yet another fork in the road. There is a standard lasso first which gives the coeffecients along a range of Lambdas. That's good but, then there is the cross validating lasso that used k-fold cross-validation that helps with over fitting. I think that's the move but then it leaves us with another fork! Do we want the minimum lambda (which is MSE) or a standard error away which one source said can help avoid overfitting. In this case, I don't think I'm stressed about overfitting so we are minimizing error (also, uh, no coeffecients ever are non-zero in the other one sooooooo year)
+
+```{r}
+With.Lass<-gglasso(x = Las.x, y = Las.y, group = AspectGroup, loss = "ls")
+plot(With.Lass)
+coef(With.Lass)[,95:100]
+
+CV.With.Lass<- cv.gglasso(x = Las.x, y = Las.y, group = AspectGroup, pred.loss = "L1")
+plot(CV.With.Lass)
+coef(CV.With.Lass, s = "lambda.min")
+coef(CV.With.Lass, s = "lambda.1se")
+
+
+```
+
+You won't see it here, but a problem with the cross validation is that it introduces some randomness. If you re run it, it comes to a different solution each time. I solve this a little ways down. 
+
+
+## *All Variables (Soil Data)*
+
+Okay, so, this is the second approach which prioritizes having all variables included at the expense of ~40 plots. Leaving us with a sample size of 64 instead of 107. But the soil data (pH, conductivity, and salinity) may be very important
+
+### Data Wrangling: Removing plots with NA for ph
+
+The Lasso-ing process is much the same here as it was before. The tricky plot was really data wrangling. I'm sure there are a thousand better ways to wrangle but this works for me!
+
+```{r}
+Las.x2<- With_Las %>%
+  select(c( "SoilTemp", "SoilMoist","X", "Y", "Z", "Slope", "pH", "cond_us.cm", "salinity_ppt")) %>% na.omit()
+
+
+DumAspect2<-With_Las %>%
+  dummy_cols( select_columns = "Aspect") %>% 
+  select(Aspect_E:Aspect_W, pH)%>%
+  na.omit() %>%
+  select(Aspect_E:Aspect_W)
+
+
+Las.x3<- Las.x2%>%
+  cbind(DumAspect2) 
+
+dim(Las.x3)
+
+
+Las.y2 <- With_Las %>%
+  select(Dissimilarity, pH) %>%
+  na.omit() %>%
+  select(Dissimilarity) %>%
+  as.matrix()
+dim(Las.y2)
+
+AspectGroup2 <- c((1:dim(Las.x2)[2]), rep(dim(Las.x2)[2]+1, 8))
+dim(Las.x3)
+
+Las.x4 <- Las.x3
+Las.x4$cond_us.cm <- scale(Las.x4$cond_us.cm)
+Las.x4$X <- scale(Las.x4$X)
+Las.x4$Y <- scale(Las.x4$Y)
+Las.x4$Z <- scale(Las.x4$Z)
+Las.x4$Slope <- scale(Las.x4$Slope)
+Las.x4$pH <- scale(Las.x4$pH)
+Las.x4$salinity_ppt <- scale(Las.x4$salinity_ppt)
+
+
+
+
+CV.With.Lass.Ph<- cv.gglasso(x = as.matrix(Las.x4), y = Las.y2, group = AspectGroup2, pred.loss = "L1")
+plot(CV.With.Lass.Ph)
+coef(CV.With.Lass.Ph, s = "lambda.min")
+coef(CV.With.Lass.Ph, s = "lambda.1se")
+
+
+```
+
+Once again, we see that the 1se gives us zeros for everything so we are going proceed with the minimizing of lambda route. I've seen people argue for both, so whatever works!
+
+# **Simulating**
+
+Okay, here is where the real magic starts. I noticed that there is some randomness in the cross-validated lasso which makes some sense. So, I figured, why not just run it a bunch of times and count up how often each variable was non-zero. So, that's what I did!
+
+```{r cache=TRUE}
+storage <- data.frame(row.names =  rownames(coef(CV.With.Lass, s = "lambda.1se")))
+storage.pH<- data.frame(row.names = rownames(coef(CV.With.Lass.Ph, s = "lambda.1se")))
+for(i in 1:10000){
+  
+  Loop <- cv.gglasso(x = Las.x, y = Las.y, group = AspectGroup, pred.loss = "L1")
+  storage[,i] <-coef(Loop, s = "lambda.min")[,1]
+
+  Loop.pH <- cv.gglasso(x = as.matrix(Las.x4), y = Las.y2, group = AspectGroup2, pred.loss = "L1")
+  storage.pH[,i] <-coef(Loop.pH, s = "lambda.min")[,1]
+  
+  #print(i)
+  i = i+1
+  
+}
+
+sim.plots<-rowSums(storage!=0)
+sim.vars<-rowSums(storage.pH!=0)
+
+as.data.frame(sort(sim.plots, decreasing = TRUE))
+as.data.frame(sort(sim.vars, decreasing = TRUE))
+
+```
+
+Okay! I've plotted and explained below!
+
+### Plotting the Simulations
+
+Just to make it easier to read
+
+```{r}
+storage.plot<- data.frame(Name = rownames_to_column(storage)[1], totals = rowSums(storage!=0))
+storage.pH.plot<- data.frame(Name = rownames_to_column(storage.pH)[1], totals = rowSums(storage.pH!=0))
+
+
+ggplot(aes(x = rowname, y = totals), data = storage.plot)+
+  geom_point()+
+  geom_segment( aes(x=rowname, xend=rowname, y=0, yend=totals))+
+  scale_x_discrete(guide = guide_axis(angle = 45)) +
+  theme_classic()+
+  labs(x = "Variable", y = "Frequency non-zero in LASSO", title = "All Plots Cross-Validated Lasso Simulation")
+
+
+
+ggplot(aes(x = rowname, y = totals), data = storage.pH.plot)+
+  geom_point()+
+  geom_segment( aes(x=rowname, xend=rowname, y=0, yend=totals))+
+  scale_x_discrete(guide = guide_axis(angle = 45)) +
+  theme_classic()+
+  labs(x = "Variable", y = "Frequency non-zero in LASSO", title = "All Variable Cross-Validated Lasso Simulation")
+
+```
+
+This is where everything clicked into place for me! Having the all variable simulation spit out only four variables that matter helped guide me in the all plots variant. Starting with the four most common variable in the all plots area was great guidance!
+
+
+# **Using LASSO**
+
+Now that I have my starting points! I can do more classic model selection where I can really justify what I'm doing and why.
+
+## *All Plots*
+
+The simulation for the All Plots direction spit our the Y axis (which is weird bc it shouldn't matter), the X axis (distance from waterline), Soil Temperature (it simply had to), and Slope (Okay) as the variables that most frequently mattered. That's a great place to start!
+
+### Model Selection
+
+So, here's the deal. I have known that Soil Temperature is the only thing that matter, but I haven't been able to justify what model to put it in and how I got there. A full model was being beaten by a null model and that wasn't right. Here, I put all four in a model then compared it to a null model and then each of the four individually and none of them beat them (some tied, but I think I can justify keeping the full). I then did the same negligible effects plot and everything as before!
+
+```{r}
+
+
+Lasso.plots.full <- lmer(Dissimilarity ~ Y + X + SoilTemp + Slope + Z + SoilMoist + (1|Site), data = With_Las)
+Lasso.plots.reduced <- lmer(Dissimilarity ~ Y + X + SoilTemp + Slope + Z  + (1|Site), data = With_Las)
+Lasso.plots.reduceder <- lmer(Dissimilarity ~ Y + X  +(1|Site), data = With_Las)
+
+Lasso.plots.null <- lmer(Dissimilarity ~ 1  + (1|Site), data = With_Las)
+Lasso.plots.ST<- lmer(Dissimilarity ~ SoilTemp  + (1|Site), data = With_Las)
+Lasso.plots.Y<- lmer(Dissimilarity ~ Y  + (1|Site), data = With_Las)
+Lasso.plots.X<- lmer(Dissimilarity ~ X  + (1|Site), data = With_Las)
+Lasso.plots.Slope<- lmer(Dissimilarity ~ Slope  + (1|Site), data = With_Las)
+Lasso.plots.Z<- lmer(Dissimilarity ~ Z  + (1|Site), data = With_Las)
+
+summary(Lasso.plots.full)
+r.squaredGLMM(Lasso.plots.full)
+
+
+anova(Lasso.plots.full, Lasso.plots.null)
+anova(Lasso.plots.full, Lasso.plots.ST) #technically has a lower AIC, but not sig
+anova(Lasso.plots.reduced, Lasso.plots.ST)
+anova(Lasso.plots.full, Lasso.plots.Y)
+anova(Lasso.plots.full, Lasso.plots.X)
+anova(Lasso.plots.full, Lasso.plots.Slope)
+anova(Lasso.plots.full, Lasso.plots.Z)
+anova(Lasso.plots.full, Lasso.plots.reduced)
+anova(Lasso.plots.full, Lasso.plots.reduceder)
+anova(Lasso.plots.reduced, Lasso.plots.reduceder)
+
+library(cAIC4)
+
+cAIC(Lasso.plots.full)
+cAIC(Lasso.plots.null)
+cAIC(Lasso.plots.reduced)
+cAIC(Lasso.plots.reduceder)$caic
+
+
+```
+THE FULL MODEL WINS HELL FUCKING YES
+
+Technically the Soil Temperature alone model has a lower AIC, but not significantly so!
+
+** Ben note. I made some changes and scaled all the variables before lassoing. This results in a 4 term "reduced" model winning (on an AIC tiebreaker) that is actually great and pretty much the same as before. All is good**
+
+### Another Attempt at model Selection
+
+I had another idea for how to do data selection by adding a variable from most to least common. Same result!
+
+
+###### Okay, I tried another model selection approach
+
+Since there was more variablity in the Lasso simulation for the All Plots path, I decided to do another style of model selection where I started with the most common and then added up. It gives the same result so you can skip this section if you want.
+
+```{r}
+Lasso.plots.null <- lmer(Dissimilarity ~ 1  + (1|Site), data = With_Las)
+
+Lasso.plots.Y<- lmer(Dissimilarity ~ Y  + (1|Site), data = With_Las)
+
+anova(Lasso.plots.Y, Lasso.plots.null)
+anova(Lasso.plots.X, Lasso.plots.null)
+
+Lasso.plots.YXst<- lmer(Dissimilarity ~ Y + X + SoilTemp + (1|Site), data = With_Las)
+
+
+anova(Lasso.plots.YXst, Lasso.plots.null)
+
+Lasso.plots.YXstSlopeZ<- lmer(Dissimilarity ~ Y + X + SoilTemp + Slope+ Z+ (1|Site), data = With_Las)
+anova(Lasso.plots.YXst, Lasso.plots.YXstSlopeZ)
+
+
+```
+
+
+
+### Negligbile effects
+
+Same process as before and same story 😍
+
+```{r}
+Lasso.cmp<- avg_comparisons(Lasso.plots.reduced, variables = list(Y = "minmax", X = "minmax", SoilTemp = "minmax", Slope = "minmax", Z = "minmax"),   conf_level = 0.90, type = "response")
+
+Lasso.cmp <- as.data.frame(Lasso.cmp)
+
+Comb_Dis$Site <- factor(Comb_Dis$Site, levels=c('TeMi', 'Zmud', 'GuNi'))
+
+
+Plots.Negl<-   ggplot(Lasso.cmp, aes(x = estimate,
+                 xmin = conf.low,
+                 xmax = conf.high, 
+                 y = term,
+                 group = contrast)) +
+     annotate("rect", xmin = -0.1, xmax = 0.1, ymin = -Inf, ymax = Inf, alpha = .2)+
+  geom_vline(xintercept = c(-0.1, .1), linetype = "dashed") + 
+  geom_vline(xintercept = 0, linetype = "solid", linewidth = 1.5)+
+  geom_errorbarh(aes(xmin = conf.low,  xmax = conf.high,)) + 
+  geom_point(size = 4) +
+  theme_classic()+
+  labs(x = "Estimated Change in Community Dissimilarity", y = "Term", title = "All Plots")+
+  theme(text = element_text(family = "serif", size = 18), axis.text.y = element_text( size=12, angle=45))+ 
+  scale_y_discrete(labels=c("Z" = "Elevation", 
+                            "Y" = "Y Coordinate",
+                            "X" = "X Coordinate",
+                            "SoilTemp" = "Soil Temperature",
+                            "Slope" = "Slope"))
+
+
+
+Plots.Negl
+
+
+Plots.ST<- plot_predictions(Lasso.plots.full, condition = "SoilTemp")+
+  geom_point(data = subset(Comb_Dis, Dissimilarity >0), size = 3,aes(x = SoilTemp, y = Dissimilarity, color = Site, shape = Site))+
+  labs(x = paste0("Soil Temperature (", "\u00B0", "C)"), y =  "Community Dissimilarity")+
+  scale_color_manual(labels = c("Ten Mile", "Zmudowski", "Guadalupe-Nipomo"), values = c("#d55e00", "#cc79a7", "#009e73"), name = "Site")+
+  scale_shape_manual(labels = c("Ten Mile", "Zmudowski", "Guadalupe-Nipomo"), values = c(1,2,0), name = "Site")+
+  theme_classic()+
+  theme( text = element_text(family = "serif", size = 18))
+
+Plots.ST
+```
+
+## *All Variables*
+
+We repeat the same process for the All Variables pathway. This was much easier because there were only four variables that ever mattered: Soil conductivity, Y axis, X axis, and Soil Temperature. We start there and then see if it is any good.
+
+### Model Selection
+
+```{r}
+With_Las_Soil <- subset(With_Las, !is.na(cond_us.cm))
+
+With_Las_Soil$Site <-  factor(With_Las_Soil$Site, levels=c('TeMi',  'GuNi'))
+
+
+Lasso.vars.full <- lmer(Dissimilarity ~ salinity_ppt + SoilTemp + SoilMoist + Y + (1|Site), data = With_Las_Soil)
+Lasso.vars.reduced <- lmer(Dissimilarity ~ salinity_ppt + SoilTemp + SoilMoist  + (1|Site), data = With_Las_Soil)
+
+Lasso.vars.null <- lmer(Dissimilarity ~ 1  + (1|Site), data = With_Las_Soil)
+Lasso.vars.ST<- lmer(Dissimilarity ~ SoilTemp  + (1|Site), data = With_Las_Soil)
+Lasso.vars.Y<- lmer(Dissimilarity ~ Y  + (1|Site), data = With_Las_Soil)
+Lasso.vars.SoilMoist<- lmer(Dissimilarity ~ SoilMoist  + (1|Site), data = With_Las_Soil)
+Lasso.vars.salinity<- lmer(Dissimilarity ~ salinity_ppt  + (1|Site), data = With_Las_Soil)
+
+summary(Lasso.vars.full)
+r.squaredGLMM(Lasso.vars.full)
+
+anova(Lasso.vars.full, Lasso.vars.null)
+anova(Lasso.vars.reduced, Lasso.vars.null)
+anova(Lasso.vars.full, Lasso.vars.ST)
+anova(Lasso.vars.reduced, Lasso.vars.ST)
+anova(Lasso.vars.full, Lasso.vars.Y)
+anova(Lasso.vars.full, Lasso.vars.SoilMoist)
+anova(Lasso.vars.full, Lasso.vars.salinity)
+anova(Lasso.vars.full, Lasso.vars.reduced)
+
+
+```
+
+Same story with Soil Temperature. Reduced model had lowest AIC
+
+### Negligible effects
+```{r}
+Lasso.vars.cmp<- avg_comparisons(Lasso.vars.reduced, variables = list(SoilTemp = "minmax", salinity_ppt  = "minmax", SoilMoist  = "minmax"),   conf_level = 0.90, type = "response")
+
+Lasso.vars.cmp <- as.data.frame(Lasso.vars.cmp)
+
+Vars.Negl<- ggplot(Lasso.vars.cmp, aes(x = estimate,
+                 xmin = conf.low,
+                 xmax = conf.high, 
+                 y = term,
+                 group = contrast)) +
+     annotate("rect", xmin = -0.1, xmax = 0.1, ymin = -Inf, ymax = Inf, alpha = .2)+
+  geom_vline(xintercept = c(-0.1, .1), linetype = "dashed") + 
+  geom_vline(xintercept = 0, linetype = "solid", linewidth = 1.5)+
+  geom_errorbarh(aes(xmin = conf.low,  xmax = conf.high,)) + 
+  geom_point(size = 4) +
+  theme_classic()+
+  labs(x = "Estimated Change in Community Dissimilarity", y = "Term", title = "All Variables")+
+  theme(text = element_text(family = "serif", size = 18), axis.text.y = element_text( size=12, angle=45))+ 
+  scale_y_discrete(labels=c("SoilMoist" = "Soil Moisture", 
+                            "salinity_ppt" = "Salinity",
+                            "SoilTemp" = "Soil Temperature"))+
+  xlim(-.45, .52)
+Vars.Negl
+
+Vars.ST<- plot_predictions(Lasso.vars.reduced, condition = "SoilTemp")+
+  geom_point(data = With_Las_Soil, size = 3,aes(x = SoilTemp, y = Dissimilarity, color = Site, shape = Site))+
+  labs(x = paste0("Soil Temperature (", "\u00B0", "C)"), y =  "Community Dissimilarity")+
+  scale_color_manual(labels = c("Ten Mile", "Guadalupe-Nipomo"), values = c("#d55e00", "#009e73"), name = "Site")+
+  scale_shape_manual(labels = c("Ten Mile", "Guadalupe-Nipomo"), values = c(1,0), name = "Site")+
+  theme_classic()+
+  theme(text = element_text(family = "serif", size = 18))
+
+Vars.SM<- plot_predictions(Lasso.vars.reduced, condition = "SoilMoist")+
+  geom_point(data = With_Las_Soil, size = 3,aes(x = SoilMoist, y = Dissimilarity, color = Site, shape = Site))+
+  labs(x = "Soil Moisture (%)", y =  "Community Dissimilarity")+
+  scale_color_manual(labels = c("Ten Mile", "Guadalupe-Nipomo"), values = c("#d55e00", "#009e73"), name = "Site")+
+  scale_shape_manual(labels = c("Ten Mile", "Guadalupe-Nipomo"), values = c(1,0), name = "Site")+
+  theme_classic()+
+  theme(text = element_text(family = "serif", size = 18))
+
+
+Vars.Salin<- plot_predictions(Lasso.vars.reduced, condition = "salinity_ppt")+
+  geom_point(data = With_Las_Soil, size = 3,aes(x = salinity_ppt, y = Dissimilarity, color = Site, shape = Site))+
+  labs(x = "Soil Salinity (ppt)", y =  "Community Dissimilarity")+
+  scale_color_manual(labels = c("Ten Mile", "Guadalupe-Nipomo"), values = c("#d55e00", "#009e73"), name = "Site")+
+  scale_shape_manual(labels = c("Ten Mile", "Guadalupe-Nipomo"), values = c(1,0), name = "Site")+
+  theme_classic()+
+  theme(text = element_text(family = "serif", size = 18))
+
+Vars.Negl
+Vars.ST
+Vars.SM
+Vars.Salin
+```
+
+INTERESTING!!!! Soil conductivity is signifgant but unsure if it is substantial. But certainly worth reporting and discussing! New results! This one actually conforms to the Stress Gradient Hypothesis better so the story gets nice and muddy!
+
+# ** Tables **
+
+```{r}
+modelsummary(Lasso.plots.full)
+modelsummary(Lasso.vars.reduced)
+
+models.plots<- list( 
+  "All Plots (winner)" = Lasso.plots.reduced,
+  "All Plots (full)" = Lasso.plots.full,
+  "All Plots (Reduceder)" = Lasso.plots.reduceder,
+  "All Plots (Null)" = Lasso.plots.null
+   )
+
+
+models.vars<- list( 
+  "All Variables (Winner)" = Lasso.vars.reduced,
+  "All Variables (full)" = Lasso.vars.full,
+  "All Variables (null)" = Lasso.vars.null  )
+
+fun <- function(model) data.frame("corrected" = round(cAIC4::cAIC(model)$caic, 2))
+
+
+modelsummary(models.plots,
+  fmt = 3,
+  estimate  = "{estimate} [{conf.low}, {conf.high}]",
+  statistic = NULL, 
+  conf_level = .90,
+  gof_function = fun, 
+  gof_omit = 'AIC|BIC|ICC',
+  output = "AllPlotsTable.docx")
+
+modelsummary(models.vars,
+  fmt = 3,
+  estimate  = "{estimate} [{conf.low}, {conf.high}]",
+  statistic = NULL, 
+  conf_level = .90,  
+  gof_omit = 'AIC|BIC|ICC',
+  gof_function = fun, 
+  output = "AllVarsTable.docx")
+
+cAIC(Lasso.vars.reduced, B = 100)$caic
+
+```
+
+# **Figure Construction**
+
+```{r}
+
+#ggarrange(Plots.Negl, Vars.Negl, Plots.ST, Vars.ST,  widths = 5)
+
+legend<-get_legend(Plots.ST+    theme(legend.background = element_rect(colour = 'black', fill = 'white', linetype='solid')))
+
+legend$grobs
+
+leg<-plot_grid(legend)
+
+leg  
+
+Plots.ST2 <- Plots.ST+ theme(legend.position='bottom', legend.background = element_rect(colour = 'black', fill = 'white', linetype='solid'))
+Vars.ST2<- Vars.ST+ theme(legend.position='none')
+Vars.Salin2<- Vars.Salin+ theme(legend.position='none')
+
+
+
+WithinGraphCombined<- ggdraw() +
+  draw_plot(Plots.Negl, x = 0, y = .666, width = 0.5, height = .333) +
+  draw_plot(Plots.ST2, x = 0, y = 0.288, width = 0.5, height = .378) +
+  draw_plot(Vars.Negl, x = .5, y = .666, width = 0.5, height = 0.3333) +
+  draw_plot(Vars.ST2, x = .5, y = 0.33333, width = 0.5, height = 0.3333) +
+  draw_plot(Vars.Salin2, x = .5, y = 0, width = 0.5, height = 0.3333) +
+  draw_image("WithinPlotLogo.png", x = 0.15, y = 0.04, width = .25, height = 0.25) +
+  draw_plot_label(label = c("A", "C", "B", "D", "E"),family = "serif", size = 20, color = "black",
+                  x = c(0, 0, 0.5, .5, .5), y = c(.9999, .69, 0.99999, .69,0.355 ))+
+  draw_line(
+    x = c(0.5, 0.5),
+    y = c(.98, 0.02),
+    color = "black", size = 1, linetype = 5, alpha = 0.5)+
+  theme(plot.background = element_rect(fill = "white", color = "transparent"))
+WithinGraphCombined
+
+
+ggsave( "WithinGraph.png", dpi = 600, height = 12, width = 15)
+```
+
+
+# **Conculsion**
+
+This feels like a really justifiable and useful and interesing way to present these data at this level! Complicates things a smidge, but I think it is really worth it! However, let me know if there is something I'm not seeing here, but I'm pretty confident in defending it. Super cool and thank you for the kick in the pants!
+  
+  
+-B
+
+### Lil corplot
+
+```{r}
+library(corrplot)
+library(Hmisc)
+
+cor_dis<-Comb_Dis %>% select(Dissimilarity, X, Y, Z, SoilTemp, SoilMoist)
+
+corr<-rcorr(as.matrix(cor_dis))
+
+corrplot(corr$r, type = "upper", col = COL2('PiYG'), outline = TRUE, p.mat = corr$P %>% replace(is.na(.), 1), sig.level = 0.05, insig = "label_sig")
+      
+
+```
+
+```{r}
+save.image(file="DuneComm3.RData") 
+```
+
+

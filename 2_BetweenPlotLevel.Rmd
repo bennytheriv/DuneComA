@@ -19,16 +19,19 @@ library(ggstance)
 library(lattice)
 library(ggpubr)
 library(cowplot)
+library(extrafont)
+library(lme4)
+library(modelsummary)
 
 
-load(file = ".RData") #this allows me to use the global data. So I can make dataframes elsewhere and then use them here.
+load(file = "DuneComm3.RData") #this allows me to use the global data. So I can make dataframes elsewhere and then use them here.
 CircleConverter <- data.frame(Aspect = c("N", "NW","W","SW", "S", "SE","E","NE"), 
                      Angle = c(0,45,90,135,180,225,270,315)) #critical for conversion of aspect
 
 
 ```
 
-
+The goal of this file is look at the the between plot level of our study. As we did in previous files, we begin with measuring each site individually. For the analysis more relevant to the manuscript, scroll to the heading title "**Combined Analysis**" where we grouped each site together. From there, we created our models and figures. 
 
 # Ten Mile
 
@@ -489,7 +492,7 @@ summary(lm(Dissim ~ EnvDis*TotalDist, data = Zmud2)) # .
 Zmud_Combined.mod <- lm(Dissim ~ TotalDist+EnvDis, data = Zmud2)
 summary(Zmud_Combined.mod)
 Zmud.pre<-predictions(Zmud_Combined.mod)
-ggplot(aes(x = EnvDis, y = estimate), data = pre)+
+ggplot(aes(x = EnvDis, y = estimate), data = Zmud.pre)+
   geom_point()
 
 
@@ -756,7 +759,7 @@ ggplot(aes(x = EnvDis, y = Dissim), data = GuNi2)+
 ```
 
 
-# **Combined**
+# **Combined Analysis**
 
 ### Data management
 
@@ -948,5 +951,10 @@ modelsummary(models.plots2,
 
 
 
+```
+
+
+```{r}
+save.image(file="DuneComm4.RData") 
 ```
 

@@ -1,5 +1,5 @@
 ---
-title: "DCA_DataFrames"
+title: "0 Data Frame Management"
 author: "Ben J. Rivera"
 date: '2023-01-16'
 output: html_document
@@ -13,6 +13,7 @@ library(here)
 library(rtry)
 library(corrplot)
 library(vegan)
+library(lattice)
 
 ```
 
@@ -286,48 +287,8 @@ ggplot(aes(x = Height, y = BasalDiam, color = Species, shape = Site), data = Suc
 
 ```
 
-# Traits From Databases
-
-Okay, let's figure out how to get some traits from the online world. There is code back from the Traits textbook that I am hoping to co-op for my own purposes. I am also using this as some training for the Roots class if need be.
 
 ```{r}
-### I moved the data set "ProperNames Up to use on Cover"
-
-library("traits")
-library("taxize")
-library("TR8")
-#taxa_search(Proper_Names[1:20,]$New_Species_Name, db = "traitbank")
-
-
-
-
-#tr8(species_list = Proper_Names[1:5,]$New_Species_Name, gui_config=TRUE, allow_persistent=TRUE)
-
-
-TryNames <- read_csv(here("EnteredData", "TryAccSpecies.csv"))
-
-
-Trying<-merge(Proper_Names, TryNames, by.x ="New_Species_Name", by.y = "AccSpeciesName")
-
-unique(Trying$AccSpeciesID)
-
-TryTraits <- read_csv(here("EnteredData", "tde20232141444.csv"))
-
-
-
-TryTraits$count<-rowSums(TryTraits[3:length(TryTraits)] != 0)
-
-PickedTraits<- subset(TryTraits, count>5)
-
-colSums(PickedTraits[3:length(TryTraits)] != 0)
-
-PickedTraits$TraitID
-```
-
-
-
-# Soil Analysis
-
-```{r}
+save.image(file="DuneComm1.RData") 
 ```
 
