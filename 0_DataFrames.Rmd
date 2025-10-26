@@ -1,8 +1,10 @@
 ---
 title: "0 Data Frame Management"
 author: "Ben J. Rivera"
-date: '2023-01-16'
-output: html_document
+date: "2023-01-16"
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}

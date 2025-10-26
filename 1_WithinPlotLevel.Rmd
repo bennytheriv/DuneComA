@@ -1,8 +1,11 @@
 ---
 title: "1 Within Plot Level"
 author: "Ben J. Rivera"
-date: '2023-01-31'
-output: html_document
+date: "2023-01-31"
+output:
+  pdf_document: default
+  html_document: default
+  word_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -669,7 +672,7 @@ ggsave("Within-SoilTemp.png", dpi = 600, height = 7, width = 10)
 
 #### Randomization Test
 
-```{r}
+```{r cache = TRUE}
 Tracker<- data.frame()
 SingleTrack<-0
 

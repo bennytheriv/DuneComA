@@ -1,6 +1,8 @@
 ---
 title: "1.2 WithinPlot:LASSO Regression"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 date: "2025-06-20"
 ---
 
@@ -291,7 +293,7 @@ anova(Lasso.plots.YXst, Lasso.plots.YXstSlopeZ)
 
 ### Negligbile effects
 
-Same process as before and same story 😍
+Same process as before and same story
 
 ```{r}
 Lasso.cmp<- avg_comparisons(Lasso.plots.reduced, variables = list(Y = "minmax", X = "minmax", SoilTemp = "minmax", Slope = "minmax", Z = "minmax"),   conf_level = 0.90, type = "response")
@@ -435,8 +437,8 @@ INTERESTING!!!! Soil conductivity is signifgant but unsure if it is substantial.
 # ** Tables **
 
 ```{r}
-modelsummary(Lasso.plots.full)
-modelsummary(Lasso.vars.reduced)
+#modelsummary(Lasso.plots.full)
+#modelsummary(Lasso.vars.reduced)
 
 models.plots<- list( 
   "All Plots (winner)" = Lasso.plots.reduced,
@@ -452,25 +454,25 @@ models.vars<- list(
   "All Variables (null)" = Lasso.vars.null  )
 
 fun <- function(model) data.frame("corrected" = round(cAIC4::cAIC(model)$caic, 2))
-
-
-modelsummary(models.plots,
-  fmt = 3,
-  estimate  = "{estimate} [{conf.low}, {conf.high}]",
-  statistic = NULL, 
-  conf_level = .90,
-  gof_function = fun, 
-  gof_omit = 'AIC|BIC|ICC',
-  output = "AllPlotsTable.docx")
-
-modelsummary(models.vars,
-  fmt = 3,
-  estimate  = "{estimate} [{conf.low}, {conf.high}]",
-  statistic = NULL, 
-  conf_level = .90,  
-  gof_omit = 'AIC|BIC|ICC',
-  gof_function = fun, 
-  output = "AllVarsTable.docx")
+# 
+# 
+# modelsummary(models.plots,
+#   fmt = 3,
+#   estimate  = "{estimate} [{conf.low}, {conf.high}]",
+#   statistic = NULL, 
+#   conf_level = .90,
+#   gof_function = fun, 
+#   gof_omit = 'AIC|BIC|ICC',
+#   output = "AllPlotsTable.docx")
+# 
+# modelsummary(models.vars,
+#   fmt = 3,
+#   estimate  = "{estimate} [{conf.low}, {conf.high}]",
+#   statistic = NULL, 
+#   conf_level = .90,  
+#   gof_omit = 'AIC|BIC|ICC',
+#   gof_function = fun, 
+#   output = "AllVarsTable.docx")
 
 cAIC(Lasso.vars.reduced, B = 100)$caic
 
