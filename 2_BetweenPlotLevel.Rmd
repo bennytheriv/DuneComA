@@ -24,6 +24,7 @@ library(cowplot)
 library(extrafont)
 library(lme4)
 library(modelsummary)
+library(ggside)
 
 
 load(file = "DuneComm3.RData") #this allows me to use the global data. So I can make dataframes elsewhere and then use them here.
@@ -820,9 +821,9 @@ Bet.Negl<- ggplot(Mixed2.cmp, aes(x = estimate,
   geom_point(size = 4, position = position_dodgev(height = 1.5)) +
   theme_classic()+
   labs(x = "Estimated Change in Community Dissimilarity", y = "Term")+
-  theme(text = element_text(family = "serif", size = 18), axis.text.y = element_text( size=12, angle=45))+ 
-  scale_y_discrete(labels=c("TotalDist" = "Distance Between Plots", 
-                            "EnvDis" = "Environmental Dissimilarity"))
+  theme(text = element_text(family = "serif", size = 18), axis.text.y = element_text( size=18, angle=0))+ 
+  scale_y_discrete(labels=c("TotalDist" = expression(paste("Distance  \nBetween  \n  Plots")), 
+                            "EnvDis" = expression(paste("Environmental \n Dissimilarity"))))
 
 Bet.Negl
 ggsave("Between-Marginal.png", dpi = 600, height = 7, width = 10)
@@ -856,19 +857,21 @@ Bet.EnvDis <- ggplot(aes(x = EnvDis, y = estimate), data = pp_between_EnvDis)+
   scale_shape_manual(labels = c("Ten Mile", "Zmudowski", "Guadalupe-Nipomo"), values = c(1,2,0), name = "Site")+
   theme_classic()+
   theme(text = element_text(family = "serif", size = 18),legend.position='bottom', legend.background = element_rect(colour = 'black', fill = 'white', linetype='solid'))+
-    geom_xsidedensity(aes(y= after_stat(density),color = Site, fill = Site),
+    geom_xsidedensity(aes(y= after_stat(density),color = Site, fill = Site, linetype = Site),
     alpha    = 0.25,
     size     = 1,
     position = "identity",
     data = Combo3
   ) +
-    geom_ysidedensity(aes(x= after_stat(density),color = Site, fill = Site),
+    geom_ysidedensity(aes(x= after_stat(density),color = Site, fill = Site, linetype = Site),
     alpha    = 0.25,
     size     = 1,
     position = "identity",
     data = Combo3
   ) +
   scale_fill_manual(labels = c("Ten Mile", "Zmudowski", "Guadalupe-Nipomo"), values = c("#d55e00", "#cc79a7", "#009e73"), name = "Site")+
+  scale_linetype_manual(labels = c("Ten Mile", "Zmudowski", "Guadalupe-Nipomo"), values = c(1,2,3), name = "Site")+
+
   theme_ggside_void()
 
 Bet.EnvDis
@@ -889,18 +892,20 @@ Bet.TotalDist<- ggplot(aes(x = TotalDist, y = estimate), data = pp_between_Total
   scale_shape_manual(labels = c("Ten Mile", "Zmudowski", "Guadalupe-Nipomo"), values = c(1,2,0), name = "Site")+
   theme_classic()+
   theme(text = element_text(family = "serif", size = 18),legend.position='bottom', legend.background = element_rect(colour = 'black', fill = 'white', linetype='solid'))+
-    geom_xsidedensity(aes(y= after_stat(density),color = Site, fill = Site),
+    geom_xsidedensity(aes(y= after_stat(density),color = Site, fill = Site, linetype = Site),
     alpha    = 0.25,
     size     = 1,
     position = "identity",
     data = Combo3
   ) +
-    geom_ysidedensity(aes(x= after_stat(density),color = Site, fill = Site),
+    geom_ysidedensity(aes(x= after_stat(density),color = Site, fill = Site, linetype = Site),
     alpha    = 0.25,
     size     = 1,
     position = "identity",
     data = Combo3
   ) +
+  scale_linetype_manual(labels = c("Ten Mile", "Zmudowski", "Guadalupe-Nipomo"), values = c(1,2,3), name = "Site")+
+
   theme_ggside_void()
 
 
@@ -923,6 +928,7 @@ ggdraw() +
   draw_plot_label(label = c("A", "B", "C" ),family = "serif", size = 20, color = "black", x = c(0, 0, 0), y = c(.9999, .69, 0.355 ))+
   draw_image("BetweenPlotLogo.png", x = 0.79, y = 0.83, width = .175, height = 0.175) +
   theme(plot.background = element_rect(fill = "white", color = "transparent"))
+
 
 ggsave("BetweenGraph.png", dpi = 600, height = 12, width = 9)
 

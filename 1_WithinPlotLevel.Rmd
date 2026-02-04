@@ -676,7 +676,7 @@ ggsave("Within-SoilTemp.png", dpi = 600, height = 7, width = 10)
 Tracker<- data.frame()
 SingleTrack<-0
 
-for (i in 1:100) {
+for (i in 1:10) {
   
   Rand.1<- transform(Comb_Dis, Dissimilarity = sample(Dissimilarity) )
   Rand.mod.1 <- lmer(Dissimilarity ~ SoilTemp + SoilMoist + Slope + Aspect + X +  Z  + (1|Site), data = subset(Rand.1, Dissimilarity >0))
