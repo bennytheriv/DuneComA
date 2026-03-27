@@ -544,4 +544,30 @@ corrplot(corr$r, type = "upper", col = COL2('PiYG'), outline = TRUE, p.mat = cor
 save.image(file="DuneComm3.RData") 
 ```
 
+# Descriptive Tables
+
+```{r}
+
+#Each Site
+datasummary((Dissimilarity+ X + Y + Z + SoilTemp +SoilMoist +Slope + pH +cond_us.cm +salinity_ppt ) ~ Site *(mean+sd)*Arguments(na.rm=TRUE) ,
+  data = Comb_Dis , output = 'EnvSite.docx'
+)
+
+#All together
+datasummary((Dissimilarity+ X + Y + Z + SoilTemp +SoilMoist +Slope + pH +cond_us.cm +salinity_ppt ) ~ (mean+sd)*Arguments(na.rm=TRUE) ,
+  data = Comb_Dis , output = 'EnvTotal.docx'
+)
+
+# Real Soil Temp and Moist
+datasummary((SoilTemp +SoilMoist ) ~ (mean+sd)*Arguments(na.rm=TRUE) ,
+  data = DuneEnvData , output = 'RealSTSM-Site.docx'
+)
+
+datasummary((SoilTemp +SoilMoist ) ~ Site *(mean+sd)*Arguments(na.rm=TRUE) ,
+  data = DuneEnvData , output = 'RealSTSM-Total.docx'
+)
+
+
+
+```
 

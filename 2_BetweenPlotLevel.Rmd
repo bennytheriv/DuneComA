@@ -962,6 +962,63 @@ modelsummary(models.plots2,
 ```
 
 
+## Decriptive tables
+
+```{r}
+TeMiSum<- sort(rowSums(TeMi2_Cover, na.rm = TRUE)/length(TeMi2_Cover), decreasing = TRUE)
+ZmudSum<- sort(rowSums(Zmud2_Cover, na.rm = TRUE)/length(Zmud2_Cover), decreasing = TRUE)
+GuniSum<- sort(rowSums(GuNi2_Cover, na.rm = TRUE)/length(GuNi2_Cover), decreasing = TRUE)
+
+
+TeMiSum<-   data.frame(x = rownames(as.data.frame(TeMiSum)), y = as.vector(TeMiSum))
+ZmudSum<-   data.frame(x = rownames(as.data.frame(ZmudSum)), y = as.vector(ZmudSum))
+GuniSum<-   data.frame(x = rownames(as.data.frame(GuniSum)), y = as.vector(GuniSum))
+
+
+
+
+TeMi2_Cover[is.na(TeMi2_Cover)] <- 0
+Zmud2_Cover[is.na(Zmud2_Cover)] <- 0
+GuNi2_Cover[is.na(GuNi2_Cover)] <- 0
+
+apply(TeMi2_Cover, 1, sd) 
+apply(Zmud2_Cover, 1, sd) 
+apply(GuNi2_Cover, 1, sd) 
+
+
+TeMi2_Cover$plants <- row.names(TeMi2_Cover)
+Zmud2_Cover$plants <- row.names(Zmud2_Cover)
+GuNi2_Cover$plants <- row.names(GuNi2_Cover)
+
+#put all data frames into list
+df_list2 <- list(TeMi2_Cover, Zmud2_Cover, GuNi2_Cover)      
+
+#merge all data frames together
+CombinedCover<-Reduce(function(x, y) merge(x, y, all=TRUE, by = "plants"), df_list2) 
+CombinedCover[is.na(CombinedCover)] <- 0
+
+rownames(CombinedCover) <- CombinedCover[,1]
+
+#remove first column from data frame
+CombinedCover <- CombinedCover[,-1]
+
+sort(apply(CombinedCover, 1, mean), decreasing = TRUE)
+apply(CombinedCover, 1, sd) 
+
+
+
+# Between plot dissim
+
+Combo2
+
+mean(Combo2$Dissim)
+sd(Combo2$Dissim)
+
+datasummary((Dissim ) ~ Site *(mean+sd)*Arguments(na.rm=TRUE) ,
+  data = Combo2, output = 'BetweenSite.docx')
+```
+
+
 ```{r}
 save.image(file="DuneComm4.RData") 
 ```
